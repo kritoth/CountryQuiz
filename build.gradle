@@ -22,3 +22,8 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    okHttpVersion = '4.8.1'
+    gsonVersion = '2.8.6'
+}

@@ -1,27 +1,37 @@
 package com.tiansirk.countryquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+
+import com.tiansirk.countryquiz.utils.NetworkService;
+import com.tiansirk.countryquiz.utils.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String USER_PREFERENCES = MainActivity.class.getPackage().getName().concat("_userPrefs");
     public static final String KEY_SAVED_USER_NAME = "userName";
+    public static final String EXTRA_KEY_URL = "com.tiansirk.countryquiz.extra_key_url";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //TODO: check if this can be done in onStart because of Firestore
         boolean newUser = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE).contains(KEY_SAVED_USER_NAME);
         if(newUser) {
             saveNewUser();
             //add user to Firestore users collection
-            //fetch API
+
+            //fetch API: ?JobIntentService->okhttp->Gson->?Repository
+            startNetworkService();
             //start game
+
         } else {
             //fetch Firestore's users collection for this user
             //set data to fetched data
@@ -43,4 +53,14 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(KEY_SAVED_USER_NAME, username).apply();
     }
+
+    /**
+     * Starts the network service in which the download, parsing and saving to Firestore is to happen
+     */
+    private void startNetworkService(){
+        Intent serviceIntent = new Intent(this, NetworkService.class);
+        serviceIntent.putExtra(EXTRA_KEY_URL, NetworkUtils.URL_ALL_COUNTRY);
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
 }

@@ -29,8 +29,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    //Timber for logging
+    implementation "com.jakewharton.timber:timber:${rootProject.timberVersion}"
     //OKHttp for network requesting
-    implementation "com.squareup.okhttp3:okhttp:$rootProject.okHttpVersion"
+    implementation "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
     //GSON for parsing JSON-Java Deserialization
-    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
+    implementation "com.google.code.gson:gson:${rootProject.gsonVersion}"
 }

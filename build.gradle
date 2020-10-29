@@ -24,6 +24,7 @@ task clean(type: Delete) {
 }
 
 ext {
+    timberVersion = '4.7.1'
     okHttpVersion = '4.8.1'
     gsonVersion = '2.8.6'
 }

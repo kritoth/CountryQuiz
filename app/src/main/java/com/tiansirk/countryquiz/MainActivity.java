@@ -2,6 +2,7 @@ package com.tiansirk.countryquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import timber.log.Timber;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +22,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(BuildConfig.DEBUG){
+            Timber.plant(new Timber.DebugTree());
+        }
+
         setContentView(R.layout.activity_main);
         //TODO: check if this can be done in onStart because of Firestore
         boolean newUser = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE).contains(KEY_SAVED_USER_NAME);

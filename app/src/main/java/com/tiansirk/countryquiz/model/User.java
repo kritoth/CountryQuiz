@@ -2,6 +2,9 @@ package com.tiansirk.countryquiz.model;
 
 import java.util.List;
 
+/**
+ * Model class for Firestore document: User
+ */
 public class User {
 
     private String username;

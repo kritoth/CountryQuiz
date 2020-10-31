@@ -17,9 +17,14 @@ import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tiansirk.countryquiz.data.Repository;
 import com.tiansirk.countryquiz.databinding.ActivityMainBinding;
+import com.tiansirk.countryquiz.model.CountryJson;
+import com.tiansirk.countryquiz.utils.JsonUtils;
 import com.tiansirk.countryquiz.utils.MyDebugTree;
 import com.tiansirk.countryquiz.utils.MyReleaseTree;
 import com.tiansirk.countryquiz.utils.MyResultReceiver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MyResultReceiver.Receiver {
 
@@ -149,9 +154,11 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
             case STATUS_SUCCESSFUL:
                 result = resultData.getString("results");
                 //todo: do something interesting
-                binding.textView.setText(result);
+                List<CountryJson> countries = new ArrayList<>();
+                countries = JsonUtils.getCountriesFromJson(result);
+                binding.textView.setText("Countries list size: "+ countries.size() + "\n" + countries.get(0));
 
-                Timber.d("API response: %s", result.substring(0, 33));
+                Timber.d("API response: "+ countries.size() + ", capital: " + countries.get(0).getCapital());
                 //todo: hide progress
                 break;
             case STATUS_FAILED:

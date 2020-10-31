@@ -2,6 +2,9 @@ package com.tiansirk.countryquiz.model;
 
 import java.util.List;
 
+/**
+ * Model class for Firestore document: Level
+ */
 public class Level {
 
     private int level;

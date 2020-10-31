@@ -5,6 +5,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
+import timber.log.Timber;
+
 /**
 * Used for creating notification channel for IntentService
  */
@@ -27,6 +29,7 @@ public class App extends Application {
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
+            Timber.d("Notification channel created");
         }
     }
 }

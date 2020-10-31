@@ -10,15 +10,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
-import com.tiansirk.countryquiz.utils.NetworkService;
-import com.tiansirk.countryquiz.utils.NetworkUtils;
+import static android.app.DownloadManager.STATUS_FAILED;
+import static android.app.DownloadManager.STATUS_RUNNING;
+import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 
 import com.tiansirk.countryquiz.databinding.ActivityMainBinding;
 import com.tiansirk.countryquiz.utils.MyDebugTree;
 import com.tiansirk.countryquiz.utils.MyReleaseTree;
 import com.tiansirk.countryquiz.utils.MyResultReceiver;
 
-    public static final String TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends AppCompatActivity implements MyResultReceiver.Receiver {
+
     public static final String USER_PREFERENCES = MainActivity.class.getPackage().getName().concat("_userPrefs");
     public static final String KEY_SAVED_USER_NAME = "userName";
     public static final String EXTRA_KEY_URL = "com.tiansirk.countryquiz.extra_key_url";
@@ -95,9 +97,43 @@ import com.tiansirk.countryquiz.utils.MyResultReceiver;
      * Starts the network service in which the download, parsing and saving to Firestore is to happen
      */
     private void startNetworkService(){
-        Intent serviceIntent = new Intent(this, NetworkService.class);
-        serviceIntent.putExtra(EXTRA_KEY_URL, NetworkUtils.URL_ALL_COUNTRY);
+        mReceiver = new MyResultReceiver(new Handler());
+        mReceiver.setReceiver(this);
+        Intent serviceIntent = new Intent(Intent.ACTION_SYNC, null, this, NetworkService.class);
+        serviceIntent.putExtra(EXTRA_KEY_RECEIVER, mReceiver);
+        serviceIntent.putExtra(EXTRA_KEY_URL, NetworkService.URL_ALL_COUNTRY);
+        Timber.d("Calling service for OkHttp");
         ContextCompat.startForegroundService(this, serviceIntent);
     }
 
+    /**
+     * Receives the result from IntentService
+     * @param resultCode
+     * @param resultData
+     */
+    public void onReceiveResult(int resultCode, Bundle resultData) {
+        String result = "";
+        switch (resultCode) {
+            case STATUS_RUNNING:
+                //todo: show progress
+                result = "in progress";
+                binding.textView.setText(result);
+                break;
+            case STATUS_SUCCESSFUL:
+                result = resultData.getString("results");
+                //todo: do something interesting
+                binding.textView.setText(result);
+
+                Timber.d("API response: %s", result.substring(0, 33));
+                //todo: hide progress
+                break;
+            case STATUS_FAILED:
+                //todo: handle the error;
+                result = resultData.getString("failed");
+                binding.textView.setText(result);
+
+                Timber.d("Error in API response: %s", result);
+                break;
+        }
+    }
 }

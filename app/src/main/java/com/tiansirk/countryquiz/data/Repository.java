@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.tiansirk.countryquiz.model.Country;
 
 public class Repository {
 
@@ -25,6 +26,10 @@ public class Repository {
 
 
     /** READ */
+    public void loadUserData(String userName){
+        user = firestoreDb.document(userName);
+
+    }
 
 
     /** UPDATE */

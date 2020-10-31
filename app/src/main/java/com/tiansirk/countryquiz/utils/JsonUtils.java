@@ -3,7 +3,7 @@ package com.tiansirk.countryquiz.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.tiansirk.countryquiz.data.Country;
+import com.tiansirk.countryquiz.model.Country;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

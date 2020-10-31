@@ -1,4 +1,4 @@
-package com.tiansirk.countryquiz.data;
+package com.tiansirk.countryquiz.model;
 
 import java.util.List;
 

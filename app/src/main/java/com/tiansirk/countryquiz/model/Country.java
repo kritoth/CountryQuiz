@@ -1,5 +1,8 @@
-package com.tiansirk.countryquiz.data;
+package com.tiansirk.countryquiz.model;
 
+/**
+ * Model class for Firestore document: Country
+ */
 public class Country {
 
     String name;            //"Afghanistan"
@@ -10,7 +13,8 @@ public class Country {
     double area;            //652230.0
     String[] timezones;     //["UTC+04:30"]
     String[] borders;       //["IRN","PAK","TKM","UZB","TJK","CHN"]
-    Currency[] currencies;
+    String currencyName;    //"̶C̶o̶l̶o̶̶m̶b̶i̶a̶n̶ peso"
+    String currencySymbol;  //"$"
     String flag;            //"https://restcountries.eu/data/afg.svg"
 
 

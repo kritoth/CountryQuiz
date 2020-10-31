@@ -17,9 +17,9 @@ public class Repository {
     private Context activityContext;
     private Country[] mCountries;
 
-    public Repository(Context activityContext, FirebaseFirestore firebaseFirestore) {
+    public Repository(Context activityContext) {
         this.activityContext = activityContext;
-        firestoreDb = firebaseFirestore;
+        firestoreDb = FirebaseFirestore.getInstance();;
     }
 
     /** CREATE */
@@ -28,6 +28,10 @@ public class Repository {
     /** READ */
     public void loadUserData(String userName){
         user = firestoreDb.document(userName);
+
+    }
+
+    public void loadGame(){
 
     }
 

@@ -71,8 +71,7 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
         }
     }
     private void initFireStore(){
-        FirebaseFirestore firestoreDb = FirebaseFirestore.getInstance();
-        mRepository = new Repository(this, firestoreDb);
+        mRepository = new Repository(this);
     }
 
     /* Setup Firestore EventListener here in order to spare bandwith usage while the app is not in foreground */
@@ -80,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
     protected void onStart() {
         super.onStart();
         setupEventListener();
+        loadGame();
     }
 
     /** TODO: change this to Firebase Authentication
@@ -89,6 +89,13 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
 
     }
 
+    /**
+     * Loads the current state of the game from Firestore. It uses compound queries to get the data
+     * from the User document
+     */
+    private void loadGame(){
+        mRepository.loadGame();
+    }
 
     public void dnload(View view){
         startNetworkService();

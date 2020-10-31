@@ -1,26 +1,24 @@
 package com.tiansirk.countryquiz.data;
 
 import android.content.Context;
-import android.util.Log;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Repository {
 
     private static final String TAG = Repository.class.getSimpleName();
-    //FirebaseFirestore firestoreDb = FirebaseFirestore.getInstance();
+    FirebaseFirestore firestoreDb;
+    CollectionReference allUsers;
+    DocumentReference user;
 
     private Context activityContext;
     private Country[] mCountries;
 
-    public Repository(Context activityContext) {
+    public Repository(Context activityContext, FirebaseFirestore firebaseFirestore) {
         this.activityContext = activityContext;
+        firestoreDb = firebaseFirestore;
     }
 
     /** CREATE */

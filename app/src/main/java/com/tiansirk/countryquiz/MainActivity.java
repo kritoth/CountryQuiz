@@ -14,6 +14,8 @@ import static android.app.DownloadManager.STATUS_FAILED;
 import static android.app.DownloadManager.STATUS_RUNNING;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.tiansirk.countryquiz.data.Repository;
 import com.tiansirk.countryquiz.databinding.ActivityMainBinding;
 import com.tiansirk.countryquiz.utils.MyDebugTree;
 import com.tiansirk.countryquiz.utils.MyReleaseTree;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
 
     private ActivityMainBinding binding;
     public MyResultReceiver mReceiver;
+    private Repository mRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +38,22 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
 
         initView();
         initTimber();
-        //TODO: check if this can be done in onStart because of Firestore
-        //initFireStore();
+        initFireStore();
+
+/*        //boolean newUser = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE).contains(KEY_SAVED_USER_NAME);
+        if(newUser) {
+            saveNewUser();
+            //add user to Firestore users collection
+
+            //fetch API: ?JobIntentService->okhttp->Gson->?Repository
+            startNetworkService();
+            //start game
+        } else {
+            Timber.d("User already exists");
+            //fetch Firestore's users collection for this user
+            //set data to fetched data
+            //continue game
+        }*/
 
     }
 
@@ -54,21 +71,24 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
         }
     }
     private void initFireStore(){
-        boolean newUser = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE).contains(KEY_SAVED_USER_NAME);
-        if(newUser) {
-            saveNewUser();
-            //add user to Firestore users collection
-
-            //fetch API: ?JobIntentService->okhttp->Gson->?Repository
-            startNetworkService();
-            //start game
-        } else {
-            Timber.d("User already exists");
-            //fetch Firestore's users collection for this user
-            //set data to fetched data
-            //continue game
-        }
+        FirebaseFirestore firestoreDb = FirebaseFirestore.getInstance();
+        mRepository = new Repository(this, firestoreDb);
     }
+
+    /* Setup Firestore EventListener here in order to spare bandwith usage while the app is not in foreground */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setupEventListener();
+    }
+
+    /** TODO: change this to Firebase Authentication
+     * Setup EventListener to sync user info
+     */
+    private void setupEventListener(){
+
+    }
+
 
     public void dnload(View view){
         startNetworkService();

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "247504099653",
+    "firebase_url": "https://countryquiz-89963.firebaseio.com",
+    "project_id": "countryquiz-89963",
+    "storage_bucket": "countryquiz-89963.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247504099653:android:71dbfed391eff5b6ce462c",
+        "android_client_info": {
+          "package_name": "com.tiansirk.countryquiz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247504099653-u5uh6pl8p06rip7q3bpan8u8lv7ed6on.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGJJ9THy7UHOmsqO1gs102cGaDX7uLy8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "247504099653-u5uh6pl8p06rip7q3bpan8u8lv7ed6on.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

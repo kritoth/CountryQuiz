@@ -1,5 +1,7 @@
 package com.tiansirk.countryquiz.model;
 
+import com.google.firebase.firestore.Exclude;
+
 import java.util.Arrays;
 
 /**
@@ -7,18 +9,24 @@ import java.util.Arrays;
  */
 public class Country {
 
-    String name;            //"Afghanistan"
-    String[] topLevelDomain;  //[".af"]
-    String alpha3Code;      //"AFG"
-    String capital;         //"Kabul"
-    String region;          //"Asia"
-    int population;         //27657145
-    double area;            //652230.0
-    String[] timezones;     //["UTC+04:30"]
-    String[] borders;       //["IRN","PAK","TKM","UZB","TJK","CHN"]
-    String currencyName;    //"̶C̶o̶l̶o̶̶m̶b̶i̶a̶n̶ peso"
-    String currencySymbol;  //"$"
-    String flag;            //"https://restcountries.eu/data/afg.svg"
+    //The auto ID given by Firestore. It is needed to have during queries for identification, sorting, etc purposes
+    private String documentId;
+    private String name;            //"Afghanistan"
+    private String[] topLevelDomain;  //[".af"]
+    private String alpha3Code;      //"AFG"
+    private String capital;         //"Kabul"
+    private String region;          //"Asia"
+    private int population;         //27657145
+    private double area;            //652230.0
+    private String[] timezones;     //["UTC+04:30"]
+    private String[] borders;       //["IRN","PAK","TKM","UZB","TJK","CHN"]
+    private String currencyName;    //"̶C̶o̶l̶o̶̶m̶b̶i̶a̶n̶ peso"
+    private String currencySymbol;  //"$"
+    private String flag;            //"https://restcountries.eu/data/afg.svg"
+
+    /** Empty constructor is needed for Firestore to be able to recreate the Object from its Document */
+    public Country() {
+    }
 
     public Country(String name, String[] topLevelDomain, String alpha3Code, String capital, String region, int population, double area, String[] timezones, String[] borders, String currencyName, String currencySymbol, String flag) {
         this.name = name;
@@ -33,6 +41,12 @@ public class Country {
         this.currencyName = currencyName;
         this.currencySymbol = currencySymbol;
         this.flag = flag;
+    }
+
+    //Need to be excluded from Firestore's autogenereting the Object
+    @Exclude
+    public String getDocumentId() {
+        return documentId;
     }
 
     public String getName() {

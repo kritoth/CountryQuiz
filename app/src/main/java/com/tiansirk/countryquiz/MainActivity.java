@@ -45,7 +45,9 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
 
         initView();
         initTimber();
+        //if(newUser)
         showEditDialog();
+        //else
         initFireStore();
 
     }
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
      */
     @Override
     public void onFinishEditDialog(String inputText) {
-        Toast.makeText(this, "Hi, " + inputText, Toast.LENGTH_SHORT).show();
+        saveNewUser(inputText);
     }
 
     private void initFireStore(){
@@ -100,25 +102,16 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
         mRepository.loadGame();
     }
 
-
-    public void dnload(View view){
-        startNetworkService();
-    }
-    public void saveUser(View view){
-        //getText from dialog and save as username
-    }
-
     /**
      * Saves a first-timer into {@link SharedPreferences}. Shows a first time dialog to prompt
      * the user to save a username. If no username is saved it will show no progress will be saved.
      */
-    private void saveNewUser(){
-        String username = "";
-        //TODO: NE SharedPref but Firestore
-
-        SharedPreferences prefs = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE);
+    private void saveNewUser(String name){
+        //TODO: NE SettText és NE SharedPref but Firestore
+        binding.textView.setText(name);
+        /*SharedPreferences prefs = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(KEY_SAVED_USER_NAME, username).apply();
+        editor.putString(KEY_SAVED_USER_NAME, username).apply();*/
         Timber.d("New user saved");
     }
 
@@ -167,4 +160,16 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
                 break;
         }
     }
+
+/* For Testing */
+    public void dnload(View view){
+        startNetworkService();
+    }
+
+    public void saveUser(View view){
+        //getText from dialog and save as username
+        String name = binding.etEnterName.getText().toString();
+        Toast.makeText(this, "Hi, " + name, Toast.LENGTH_SHORT).show();
+    }
+
 }

@@ -7,6 +7,9 @@ import org.jetbrains.annotations.Nullable;
 
 import timber.log.Timber;
 
+/**
+ * Own customized Timber for logging during release build variant
+ */
 public class MyReleaseTree extends Timber.Tree {
     @Override
     protected void log(int priority, @Nullable String tag, @NotNull String message, @Nullable Throwable t) {

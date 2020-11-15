@@ -3,23 +3,23 @@ package com.tiansirk.countryquiz.model;
 import java.util.Arrays;
 
 /**
- * Model class to create by GSON from the JSON response from API. The array of {@link Currency} objects
+ * Model class to create objects by GSON from the JSON response from API. The array of {@link Currency} objects
  * are to transform to 2 distinct String fields. One for a substring of the value of "name" and
  * One for the value of "symbol"
  */
 public class CountryJson {
 
-    String name;            //"Afghanistan"
-    String[] topLevelDomain;  //[".af"]
-    String alpha3Code;      //"AFG"
-    String capital;         //"Kabul"
-    String region;          //"Asia"
-    int population;         //27657145
-    double area;            //652230.0
-    String[] timezones;     //["UTC+04:30"]
-    String[] borders;       //["IRN","PAK","TKM","UZB","TJK","CHN"]
-    Currency[] currencies;  //[{"code": "COP", "name": "Colombian peso", "symbol": "$"}] -> String currencyName, String currencySymbol
-    String flag;            //"https://restcountries.eu/data/afg.svg"
+    private String name;            //"Afghanistan"
+    private String[] topLevelDomain;  //[".af"]
+    private String alpha3Code;      //"AFG"
+    private String capital;         //"Kabul"
+    private String region;          //"Asia"
+    private int population;         //27657145
+    private double area;            //652230.0
+    private String[] timezones;     //["UTC+04:30"]
+    private String[] borders;       //["IRN","PAK","TKM","UZB","TJK","CHN"]
+    private Currency[] currencies;  //[{"code": "COP", "name": "Colombian peso", "symbol": "$"}] -> String currencyName, String currencySymbol
+    private String flag;            //"https://restcountries.eu/data/afg.svg"
 
     public CountryJson(String name, String[] topLevelDomain, String alpha3Code, String capital, String region, int population, double area, String[] timezones, String[] borders, Currency[] currencies, String flag) {
         this.name = name;

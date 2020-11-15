@@ -16,17 +16,19 @@ public class Question {
     private String rightAnswer;
     private List<String> wrongAnswers;
     private int earnedPoint;
+    private boolean answered;
 
     /** Empty constructor is needed for Firestore to be able to recreate the Object from its Document */
     public Question() {
     }
 
-    public Question(int number, String question, String rightAnswer, List<String> wrongAnswers, int earnedPoint) {
+    public Question(int number, String question, String rightAnswer, List<String> wrongAnswers) {
         this.number = number;
         this.question = question;
         this.rightAnswer = rightAnswer;
         this.wrongAnswers = wrongAnswers;
-        this.earnedPoint = earnedPoint;
+        this.earnedPoint = 0;
+        this.answered = false;
     }
 
     //Need to be excluded from Firestore's autogenereting the Object
@@ -73,5 +75,13 @@ public class Question {
 
     public void setEarnedPoint(int earnedPoint) {
         this.earnedPoint = earnedPoint;
+    }
+
+    public boolean isAnswered() {
+        return answered;
+    }
+
+    public void setAnswered(boolean answered) {
+        this.answered = answered;
     }
 }

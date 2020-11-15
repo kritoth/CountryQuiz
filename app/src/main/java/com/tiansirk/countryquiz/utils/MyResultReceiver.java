@@ -6,6 +6,9 @@ import android.os.ResultReceiver;
 
 import timber.log.Timber;
 
+/**
+ * Own customized {@link ResultReceiver} for getting the result out of {@link com.tiansirk.countryquiz.NetworkService}
+ */
 public class MyResultReceiver extends ResultReceiver {
     private Receiver mReceiver;
 

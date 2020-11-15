@@ -26,6 +26,11 @@ import static com.tiansirk.countryquiz.App.CHANNEL_ID;
 import static com.tiansirk.countryquiz.MainActivity.EXTRA_KEY_RECEIVER;
 import static com.tiansirk.countryquiz.MainActivity.EXTRA_KEY_URL;
 
+/**
+ * Own customized {@link IntentService}, for doing a one time job in the background thred. This job is
+ * to fetch data from a web API. This is to be done once in the lifetime of the App, only at the very
+ * first time it's been installed and opened.
+ */
 public class NetworkService extends IntentService {
 
     public static final String TAG = NetworkService.class.getSimpleName();
@@ -33,7 +38,7 @@ public class NetworkService extends IntentService {
     public static final String CONTENT_TITLE = "Quiz Service";
     public static final String CONTENT_TEXT = "Downloading country data for the quiz.";
     public static final int ID = 1;
-    private PowerManager.WakeLock wakeLock; //To ensures finishing the services even if the device goes to sleep
+    private PowerManager.WakeLock wakeLock; //To ensure finishing the services even if the device goes to sleep
 
     public NetworkService() {
         super(TAG);
@@ -64,6 +69,11 @@ public class NetworkService extends IntentService {
         }
     }
 
+    /**
+     * During the service a network call is made with  OkHttp, see: https://square.github.io/okhttp/
+     * @param intent the Intent started the service, should contain the {@link com.tiansirk.countryquiz.utils.MyResultReceiver}
+     * and the URL for the API
+     */
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Timber.d("Starting service for OkHttp");
@@ -102,7 +112,7 @@ public class NetworkService extends IntentService {
     }
 
     /**
-     * Important to release the wakeLock when the service ends!
+     * Important to release the wakeLock when the service is to be destroyed!
      */
     @Override
     public void onDestroy() {

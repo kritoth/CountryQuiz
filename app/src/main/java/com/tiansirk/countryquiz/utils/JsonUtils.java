@@ -10,6 +10,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class for using Gson, see: https://github.com/google/gson
+ */
 public class JsonUtils {
 
     /**

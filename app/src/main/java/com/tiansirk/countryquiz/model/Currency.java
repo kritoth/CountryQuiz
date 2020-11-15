@@ -1,9 +1,8 @@
 package com.tiansirk.countryquiz.model;
 
 /**
- * Model class to create by GSON from the JSON response from API. This Currency object
- * is to be transformed to 2 distinct String fields when the recreated {@link Country} object is to be stored into Firestore.
- * One for a substring of the value of "name" and one for the value of "symbol".
+ * Model class to create by GSON from the JSON response from API. It will be stored inside of the
+ * {@link CountryJson} object, created by GSON also.
  */
 public class Currency {
 

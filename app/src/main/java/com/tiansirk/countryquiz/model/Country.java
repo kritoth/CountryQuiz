@@ -12,14 +12,14 @@ public class Country {
     //The auto ID given by Firestore. It is needed to have during queries for identification, sorting, etc purposes
     private String documentId;
     private String name;            //"Afghanistan"
-    private String[] topLevelDomain;  //[".af"]
+    private String topLevelDomain;  //".af" - transformed from array
     private String alpha3Code;      //"AFG"
     private String capital;         //"Kabul"
     private String region;          //"Asia"
     private int population;         //27657145
     private double area;            //652230.0
     private String[] timezones;     //["UTC+04:30"]
-    private String[] borders;       //["IRN","PAK","TKM","UZB","TJK","CHN"]
+    private String[] borders;       //["Iran","Pakistan","Turkmenistan","Uzbekistan","Tajikistan","China"] - transformed from alpha3Code
     private String currencyName;    //"̶C̶o̶l̶o̶̶m̶b̶i̶a̶n̶ peso"
     private String currencySymbol;  //"$"
     private String flag;            //"https://restcountries.eu/data/afg.svg"
@@ -28,7 +28,7 @@ public class Country {
     public Country() {
     }
 
-    public Country(String name, String[] topLevelDomain, String alpha3Code, String capital, String region, int population, double area, String[] timezones, String[] borders, String currencyName, String currencySymbol, String flag) {
+    public Country(String name, String topLevelDomain, String alpha3Code, String capital, String region, int population, double area, String[] timezones, String[] borders, String currencyName, String currencySymbol, String flag) {
         this.name = name;
         this.topLevelDomain = topLevelDomain;
         this.alpha3Code = alpha3Code;
@@ -57,11 +57,11 @@ public class Country {
         this.name = name;
     }
 
-    public String[] getTopLevelDomain() {
+    public String getTopLevelDomain() {
         return topLevelDomain;
     }
 
-    public void setTopLevelDomain(String[] topLevelDomain) {
+    public void setTopLevelDomain(String topLevelDomain) {
         this.topLevelDomain = topLevelDomain;
     }
 
@@ -149,7 +149,7 @@ public class Country {
     public String toString() {
         return "Country{" +
                 "name='" + name + '\'' +
-                ", topLevelDomain=" + Arrays.toString(topLevelDomain) +
+                ", topLevelDomain=" + topLevelDomain +
                 ", alpha3Code='" + alpha3Code + '\'' +
                 ", capital='" + capital + '\'' +
                 ", region='" + region + '\'' +

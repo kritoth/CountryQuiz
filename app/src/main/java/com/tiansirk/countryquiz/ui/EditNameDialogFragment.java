@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.tiansirk.countryquiz.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass to prompt the user with creating a profile.
  * Use the {@link EditNameDialogFragment#newInstance} factory method to
  * create an instance of this fragment.
  */

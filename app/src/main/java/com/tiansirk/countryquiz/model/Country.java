@@ -2,33 +2,33 @@ package com.tiansirk.countryquiz.model;
 
 import com.google.firebase.firestore.Exclude;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
- * Model class for Firestore document: Country
+ * Model class for Country to be used in game. This must be made from raw JSON parsed model classes
  */
 public class Country {
 
     //The auto ID given by Firestore. It is needed to have during queries for identification, sorting, etc purposes
     private String documentId;
-    private String name;            //"Afghanistan"
-    private String topLevelDomain;  //".af" - transformed from array
-    private String alpha3Code;      //"AFG"
-    private String capital;         //"Kabul"
-    private String region;          //"Asia"
-    private int population;         //27657145
-    private double area;            //652230.0
-    private String[] timezones;     //["UTC+04:30"]
-    private String[] borders;       //["Iran","Pakistan","Turkmenistan","Uzbekistan","Tajikistan","China"] - transformed from alpha3Code
-    private String currencyName;    //"̶C̶o̶l̶o̶̶m̶b̶i̶a̶n̶ peso"
-    private String currencySymbol;  //"$"
-    private String flag;            //"https://restcountries.eu/data/afg.svg"
+    private String name;                  //"Afghanistan"
+    private List<String> topLevelDomain;  //".af" - transformed from array
+    private String alpha3Code;            //"AFG"
+    private String capital;               //"Kabul"
+    private String region;                //"Asia"
+    private int population;               //27657145
+    private double area;                  //652230.0
+    private List<String> timezones;       //["UTC+04:30"]
+    private List<String> borders;         //["IRN","PAK","TKM","UZB","TJK","CHN"]
+    private List<Currency> currencies;    //[{"code": "COP", "name": "Colombian peso", "symbol": "$"}, ...]
+    private String flag;                  //"https://restcountries.eu/data/afg.svg"
 
     /** Empty constructor is needed for Firestore to be able to recreate the Object from its Document */
     public Country() {
     }
 
-    public Country(String name, String topLevelDomain, String alpha3Code, String capital, String region, int population, double area, String[] timezones, String[] borders, String currencyName, String currencySymbol, String flag) {
+    public Country(String name, List<String> topLevelDomain, String alpha3Code, String capital, String region, int population, double area,
+                   List<String> timezones, List<String> borders, List<Currency> currencies, String flag) {
         this.name = name;
         this.topLevelDomain = topLevelDomain;
         this.alpha3Code = alpha3Code;
@@ -38,8 +38,7 @@ public class Country {
         this.area = area;
         this.timezones = timezones;
         this.borders = borders;
-        this.currencyName = currencyName;
-        this.currencySymbol = currencySymbol;
+        this.currencies = currencies;
         this.flag = flag;
     }
 
@@ -57,11 +56,11 @@ public class Country {
         this.name = name;
     }
 
-    public String getTopLevelDomain() {
+    public List<String> getTopLevelDomain() {
         return topLevelDomain;
     }
 
-    public void setTopLevelDomain(String topLevelDomain) {
+    public void setTopLevelDomain(List<String> topLevelDomain) {
         this.topLevelDomain = topLevelDomain;
     }
 
@@ -105,36 +104,28 @@ public class Country {
         this.area = area;
     }
 
-    public String[] getTimezones() {
+    public List<String> getTimezones() {
         return timezones;
     }
 
-    public void setTimezones(String[] timezones) {
+    public void setTimezones(List<String> timezones) {
         this.timezones = timezones;
     }
 
-    public String[] getBorders() {
+    public List<String> getBorders() {
         return borders;
     }
 
-    public void setBorders(String[] borders) {
+    public void setBorders(List<String> borders) {
         this.borders = borders;
     }
 
-    public String getCurrencyName() {
-        return currencyName;
+    public List<Currency> getCurrencies() {
+        return currencies;
     }
 
-    public void setCurrencyName(String currencyName) {
-        this.currencyName = currencyName;
-    }
-
-    public String getCurrencySymbol() {
-        return currencySymbol;
-    }
-
-    public void setCurrencySymbol(String currencySymbol) {
-        this.currencySymbol = currencySymbol;
+    public void setCurrencies(List<Currency> currencies) {
+        this.currencies = currencies;
     }
 
     public String getFlag() {
@@ -148,17 +139,17 @@ public class Country {
     @Override
     public String toString() {
         return "Country{" +
-                "name='" + name + '\'' +
+                "documentId='" + documentId + '\'' +
+                ", name='" + name + '\'' +
                 ", topLevelDomain=" + topLevelDomain +
                 ", alpha3Code='" + alpha3Code + '\'' +
                 ", capital='" + capital + '\'' +
                 ", region='" + region + '\'' +
                 ", population=" + population +
                 ", area=" + area +
-                ", timezones=" + Arrays.toString(timezones) +
-                ", borders=" + Arrays.toString(borders) +
-                ", currencyName='" + currencyName + '\'' +
-                ", currencySymbol='" + currencySymbol + '\'' +
+                ", timezones=" + timezones +
+                ", borders=" + borders +
+                ", currencies=" + currencies +
                 ", flag='" + flag + '\'' +
                 '}';
     }

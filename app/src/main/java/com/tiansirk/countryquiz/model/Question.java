@@ -84,4 +84,17 @@ public class Question {
     public void setAnswered(boolean answered) {
         this.answered = answered;
     }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "documentId='" + documentId + '\'' +
+                ", number=" + number +
+                ", question='" + question + '\'' +
+                ", rightAnswer='" + rightAnswer + '\'' +
+                ", wrongAnswers=" + wrongAnswers +
+                ", earnedPoint=" + earnedPoint +
+                ", answered=" + answered +
+                '}';
+    }
 }

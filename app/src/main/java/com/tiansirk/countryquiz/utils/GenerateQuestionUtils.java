@@ -25,9 +25,8 @@ public class GenerateQuestionUtils {
             Country country = countries.get(i);
             String name = country.getName();
             Field[] declFields = country.getClass().getDeclaredFields();
-            LinkedList<Field> ll = new LinkedList<>(Arrays.asList(declFields));
-            ll.removeFirst();
-            ArrayList<Field> declaredFields = new ArrayList<>(ll);
+            List<Field> declaredFields = new ArrayList<>(Arrays.asList(declFields));
+
             for(Field declaredField : declaredFields) {
                 String question = buildQuestion(name, declaredField);
                 //String  rightAnswer = buildRightAnswer(declaredField);

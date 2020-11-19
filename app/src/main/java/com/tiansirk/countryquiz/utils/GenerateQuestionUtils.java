@@ -29,7 +29,7 @@ public class GenerateQuestionUtils {
 
             for(Field declaredField : declaredFields) {
                 String question = buildQuestion(name, declaredField);
-                //String  rightAnswer = buildRightAnswer(declaredField);
+                String  rightAnswer = buildRightAnswer(declaredField, country);
                 //List<String>  wrongAnswers = buildWrongAnswers(declaredField, countryJsons, i);
                 //if(!question.isEmpty) questions.add(new Question(i, question, rightAnswer, wrongAnswers));
             }
@@ -64,6 +64,57 @@ public class GenerateQuestionUtils {
                 return String.format("Which is the %s of %s?", subject, countryName);
         }
         return "";
+    }
+
+
+    private static String buildRightAnswer(Field countryField, Country country){
+        //String fieldType = countryField.toGenericString();
+        String subject = countryField.getName();
+        switch(subject) {
+            case ("documentId"):
+            case ("alpha3Code"):
+            case ("name"):
+                break;
+            case ("topLevelDomain"):
+                if (country.getTopLevelDomain().isEmpty()
+                        || country.getTopLevelDomain().get(0).isEmpty()) return "Has no internet domain";
+                else return country.getTopLevelDomain().get(0);
+            case ("capital"):
+                return country.getCapital();
+            case ("region"):
+                return country.getRegion();
+            case ("population"):
+                return roundpopulation(country.getPopulation());
+            case ("area"):
+                return roundArea(country.getArea());
+            case ("timezones"):
+                if (country.getTimezones().isEmpty()
+                        || country.getTimezones().get(0).isEmpty()) return "There is no time zone applied";
+                else return country.getTimezones().get(0);
+            case ("borders"):
+                if (country.getBorders().isEmpty()
+                        || country.getBorders().get(0).isEmpty()) return "Has no neighbor";
+                else return country.getBorders().get(0);
+            case ("currencies"):
+                if (country.getCurrencies().isEmpty()
+                        || country.getCurrencies().get(0).getName().isEmpty()) return "Has no currency applied";
+                else return country.getCurrencies().get(0).getName();
+            case ("flag"):
+                return country.getFlag();
+        }
+        return "";
+    }
+
+
+
+
+    private static String roundpopulation(int population){
+
+    }
+
+
+    private static String roundArea(double area){
+
     }
 
 

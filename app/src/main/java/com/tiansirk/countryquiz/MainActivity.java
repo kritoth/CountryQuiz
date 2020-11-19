@@ -18,14 +18,15 @@ import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 
 import com.tiansirk.countryquiz.data.Repository;
 import com.tiansirk.countryquiz.databinding.ActivityMainBinding;
-import com.tiansirk.countryquiz.model.CountryJson;
+import com.tiansirk.countryquiz.model.Country;
+import com.tiansirk.countryquiz.model.Question;
 import com.tiansirk.countryquiz.ui.EditNameDialogFragment;
-import com.tiansirk.countryquiz.utils.JsonUtils;
+import com.tiansirk.countryquiz.utils.CountryUtils;
+import com.tiansirk.countryquiz.utils.GenerateQuestionUtils;
 import com.tiansirk.countryquiz.utils.MyDebugTree;
 import com.tiansirk.countryquiz.utils.MyReleaseTree;
 import com.tiansirk.countryquiz.utils.MyResultReceiver;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MyResultReceiver.Receiver, EditNameDialogFragment.EditNameDialogListener {
@@ -153,11 +154,13 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
             case STATUS_SUCCESSFUL:
                 result = resultData.getString("results");
                 //todo: do something interesting
-                List<CountryJson> countries = new ArrayList<>();
-                countries = JsonUtils.getCountriesFromJson(result);
-                binding.textView.setText("Countries list size: "+ countries.size() + "\n" + countries.get(0));
+                List<Country> countries = CountryUtils.getCountriesFromJson(result);
 
-                Timber.d("API response: "+ countries.size() + ", capital: " + countries.get(0).getCapital());
+                List<Question> questions = GenerateQuestionUtils.generateQuestions(countries);
+
+                binding.textView.setText("Questions list size: " + questions.size() );
+
+                Timber.d("Resulted countries list size: "+ countries.size());
                 //todo: hide progress
                 break;
             case STATUS_FAILED:

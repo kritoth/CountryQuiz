@@ -31,10 +31,40 @@ public class GenerateQuestionUtils {
                 String question = buildQuestion(name, declaredField);
                 //String  rightAnswer = buildRightAnswer(declaredField);
                 //List<String>  wrongAnswers = buildWrongAnswers(declaredField, countryJsons, i);
-                //questions.add(new Question(i, question, rightAnswer, wrongAnswers));
+                //if(!question.isEmpty) questions.add(new Question(i, question, rightAnswer, wrongAnswers));
             }
         }
         return questions;
     }
+
+    private static String buildQuestion(String countryName, Field countryField) {
+        String subject = countryField.getName();
+        Timber.d("field name: %s", subject);
+        switch(subject) {
+            case ("documentId"):
+            case ("alpha3Code"):
+            case ("name"):
+                break;
+            case ("topLevelDomain"):
+                return String.format("What is the domain of %s used on the internet?", countryName);
+            case ("capital"):
+                return String.format("What is the %s of %s?", subject, countryName);
+            case ("region"):
+                return String.format("In which %s can %s be found?", subject, countryName);
+            case ("population"):
+            case ("area"):
+                return String.format("What is the approximate %s of %s?", subject, countryName);
+            case ("timezones"):
+                return String.format("In which time zone can %s be found?", countryName);
+            case ("borders"):
+                return String.format("Which country is a neighbor to %s?", countryName);
+            case ("currencies"):
+                return String.format("Which is the currency of %s?", countryName);
+            case ("flag"):
+                return String.format("Which is the %s of %s?", subject, countryName);
+        }
+        return "";
+    }
+
 
 }

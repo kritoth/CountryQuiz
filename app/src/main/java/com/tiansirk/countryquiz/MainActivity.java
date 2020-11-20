@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
 
 
     /**
-     * Saves a first-timer into {@link SharedPreferences}. Shows a first time dialog to prompt
+     * Saves a first-timer into Firestore. Shows a first time dialog to prompt
      * the user to save a username. If no username is saved it will show no progress will be saved.
      */
     private void saveNewUser(String name){
@@ -154,13 +154,14 @@ public class MainActivity extends AppCompatActivity implements MyResultReceiver.
             case STATUS_SUCCESSFUL:
                 result = resultData.getString("results");
                 //todo: do something interesting
+                Timber.d("Network call resulted, question generating started");
                 List<Country> countries = CountryUtils.getCountriesFromJson(result);
-
                 List<Question> questions = GenerateQuestionUtils.generateQuestions(countries);
+                Timber.d("Question generating resulted");
 
-                binding.textView.setText("Questions list size: " + questions.size() );
 
-                Timber.d("Resulted countries list size: "+ countries.size());
+                binding.textView.setText("Questions list size: " + questions.size() + "\nFirst question: " + questions.get(0));
+
                 //todo: hide progress
                 break;
             case STATUS_FAILED:

@@ -52,7 +52,7 @@ public class GenerateQuestionUtils {
                 return String.format("In which %s can %s be found?", subject, countryName);
             case ("population"):
             case ("area"):
-                return String.format("What is the approximate %s of %s?", subject, countryName);
+                return String.format("What is the approximate %s in square km of %s?", subject, countryName);
             case ("timezones"):
                 return String.format("In which time zone can %s be found?", countryName);
             case ("borders"):
@@ -114,7 +114,7 @@ public class GenerateQuestionUtils {
         List<String> wrongAnswers = new ArrayList<>();
         int[] nums = getUniqueRandomNumbers(NUM_OF_WRONG_ANSWERS, rightAnswerIndex, countries.size()); //the rightAnswerIndex must not be among these
         for (int i = 0; i < nums.length; i++) {
-            wrongAnswers.add(buildRightAnswer(countryField,countries.get(i)));
+            wrongAnswers.add(buildRightAnswer(countryField,countries.get(nums[i]))); //get a random country, using an index from the unique random numbers array
         }
         return wrongAnswers;
     }
@@ -129,11 +129,12 @@ public class GenerateQuestionUtils {
 
     /** Returns a formatted String version of {@param area}, rounded according to its value */
     private static String roundArea(double area){
-        if(area<101) return String.format("|%,d|", area);
-        else if(area<1001) return String.format("|%,d|", Math.round(area/10.0)*10);
-        else if(area<50001) return String.format("|%,d|", Math.round(area/10.0)*100);
-        else if(area<1000001) return String.format("|%,d|", Math.round(area/10.0)*1000);
-        else return String.format("|%,d|", Math.round(area/10.0)*100000);
+        int a = (int) area;
+        if(area<101) return String.format("|%,d|", a);
+        else if(area<1001) return String.format("|%,d|", Math.round(a/10.0)*10);
+        else if(area<50001) return String.format("|%,d|", Math.round(a/10.0)*100);
+        else if(area<1000001) return String.format("|%,d|", Math.round(a/10.0)*1000);
+        else return String.format("|%,d|", Math.round(a/10.0)*100000);
     }
 
     /** Generates unique random numbers between 0 inclusive and {@param endNum} exclusive,

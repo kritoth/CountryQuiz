@@ -16,6 +16,7 @@ import timber.log.Timber;
 public class GenerateQuestionUtils {
     public static final int NUM_OF_WRONG_ANSWERS = 3;
 
+    /** Generates {@link Question}s for the countries received. The questions returned as list.*/
     public static List<Question> generateQuestions(List<Country> countries) {
         List<Question> questions = new ArrayList<>();
         for (int i = 0; i < countries.size(); i++) {
@@ -34,6 +35,8 @@ public class GenerateQuestionUtils {
         return questions;
     }
 
+    /** Building the question for the country received with using the field received.
+     * If the field is not relevant, an empty string is returned.*/
     private static String buildQuestion(String countryName, Field countryField) {
         String subject = countryField.getName();
         Timber.d("field name: %s", subject);
@@ -104,6 +107,19 @@ public class GenerateQuestionUtils {
         return "";
     }
 
+    /** Building up answers for each field ensuring neither one is related to the country in question,
+     * by using the index of it. The number of answers is defined as constant.
+     * For not relevant fields returns empty string.
+     * For empty fields returns an answer that the country doesn't have that feature. */
+    private static List<String> buildWrongAnswers(Field countryField, List<Country> countries, int rightAnswerIndex) {
+        List<String> wrongAnswers = new ArrayList<>();
+        int[] nums = getUniqueRandomNumbers(NUM_OF_WRONG_ANSWERS, rightAnswerIndex, countries.size()); //the rightAnswerIndex must not be among these
+        for (int i = 0; i < nums.length; i++) {
+            wrongAnswers.add(buildRightAnswer(countryField,countries.get(i)));
+        }
+        return wrongAnswers;
+    }
+
     /** Returns a formatted String version of the parameter, rounded according to its value */
     private static String roundPopulation(int population){
         if(population<1001) return String.format("|%,d|", Math.round(population/10.0)*10);
@@ -111,7 +127,6 @@ public class GenerateQuestionUtils {
         else if(population<1000001) return String.format("|%,d|", Math.round(population/10.0)*1000);
         else return String.format("|%,d|", Math.round(population/10.0)*100000);
     }
-
 
     /** Returns a formatted String version of the parameter, rounded according to its value */
     private static String roundArea(double area){
@@ -122,28 +137,7 @@ public class GenerateQuestionUtils {
         else return String.format("|%,d|", Math.round(area/10.0)*100000);
     }
 
-
-    private static List<String> buildWrongAnswers(Field countryField, List<Country> countries, int rightAnswerIndex) {
-        List<String> wrongAnswers = new ArrayList<>();
-
-        int[] nums = getUniqueRandomNumbers(NUM_OF_WRONG_ANSWERS, rightAnswerIndex, countries.size());
-
-        for (int i = 0; i < nums.length; i++) {
-            while (true) {
-                String cap = countries.get(nums[i]).getCapital();
-
-
-            }
-        }
-
-        wrongAnswers.add(countries.get(nums[0]).getCapital());
-        wrongAnswers.add(countries.get(nums[1]).getCapital());
-        wrongAnswers.add(countries.get(nums[2]).getCapital());
-
-        return wrongAnswers;
-    }
-
-
+    /** Generates unique random numbers between 0 including and endNum excluding, numOfNums times. */
     private static int[] getUniqueRandomNumbers(int numOfNums, int excludeNum, int endNum) {
         int[] uniqueRandomNums = new int[numOfNums];
         ArrayList<Integer> list = new ArrayList<>();

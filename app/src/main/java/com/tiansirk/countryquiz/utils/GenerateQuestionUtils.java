@@ -1,7 +1,5 @@
 package com.tiansirk.countryquiz.utils;
 
-import android.os.Build;
-
 import com.tiansirk.countryquiz.model.Country;
 import com.tiansirk.countryquiz.model.Question;
 
@@ -27,11 +25,13 @@ public class GenerateQuestionUtils {
 
             for(Field declaredField : declaredFields) {
                 String question = buildQuestion(name, declaredField);
+                if(question.isEmpty()) continue;// if question is empty the field is not relevant!
                 String  rightAnswer = buildRightAnswer(declaredField, country);
                 List<String>  wrongAnswers = buildWrongAnswers(declaredField, countries, i);
-                //if(!question.isEmpty) questions.add(new Question(i, question, rightAnswer, wrongAnswers));
+                questions.add(new Question(i, question, rightAnswer, wrongAnswers));
             }
         }
+        Timber.d("Generated questions: #%s", questions.size());
         return questions;
     }
 
@@ -39,7 +39,6 @@ public class GenerateQuestionUtils {
      * If the field is not relevant, an empty string is returned.*/
     private static String buildQuestion(String countryName, Field countryField) {
         String subject = countryField.getName();
-        Timber.d("field name: %s", subject);
         switch(subject) {
             case ("documentId"):
             case ("alpha3Code"):
@@ -120,7 +119,7 @@ public class GenerateQuestionUtils {
         return wrongAnswers;
     }
 
-    /** Returns a formatted String version of the parameter, rounded according to its value */
+    /** Returns a formatted String version of {@param population}, rounded according to its value */
     private static String roundPopulation(int population){
         if(population<1001) return String.format("|%,d|", Math.round(population/10.0)*10);
         else if(population<50001) return String.format("|%,d|", Math.round(population/10.0)*100);
@@ -128,7 +127,7 @@ public class GenerateQuestionUtils {
         else return String.format("|%,d|", Math.round(population/10.0)*100000);
     }
 
-    /** Returns a formatted String version of the parameter, rounded according to its value */
+    /** Returns a formatted String version of {@param area}, rounded according to its value */
     private static String roundArea(double area){
         if(area<101) return String.format("|%,d|", area);
         else if(area<1001) return String.format("|%,d|", Math.round(area/10.0)*10);
@@ -137,7 +136,8 @@ public class GenerateQuestionUtils {
         else return String.format("|%,d|", Math.round(area/10.0)*100000);
     }
 
-    /** Generates unique random numbers between 0 including and endNum excluding, numOfNums times. */
+    /** Generates unique random numbers between 0 inclusive and {@param endNum} exclusive,
+     * {@param numOfNums} times, excluding {@param excludeNum}. */
     private static int[] getUniqueRandomNumbers(int numOfNums, int excludeNum, int endNum) {
         int[] uniqueRandomNums = new int[numOfNums];
         ArrayList<Integer> list = new ArrayList<>();

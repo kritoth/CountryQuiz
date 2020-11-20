@@ -6,12 +6,9 @@ import com.tiansirk.countryquiz.model.Country;
 import com.tiansirk.countryquiz.model.Question;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -66,7 +63,9 @@ public class GenerateQuestionUtils {
         return "";
     }
 
-
+    /** Building up the right answer for each field of the country, used in the game.
+     * For unused fields returns empty string.
+     * For empty fields returns an answer that the country doesn't have that feature. */
     private static String buildRightAnswer(Field countryField, Country country){
         //String fieldType = countryField.toGenericString();
         String subject = countryField.getName();
@@ -105,14 +104,22 @@ public class GenerateQuestionUtils {
         return "";
     }
 
-
+    /** Returns a formatted String version of the parameter, rounded according to its value */
     private static String roundPopulation(int population){
-
+        if(population<1001) return String.format("|%,d|", Math.round(population/10.0)*10);
+        else if(population<50001) return String.format("|%,d|", Math.round(population/10.0)*100);
+        else if(population<1000001) return String.format("|%,d|", Math.round(population/10.0)*1000);
+        else return String.format("|%,d|", Math.round(population/10.0)*100000);
     }
 
 
+    /** Returns a formatted String version of the parameter, rounded according to its value */
     private static String roundArea(double area){
-
+        if(area<101) return String.format("|%,d|", area);
+        else if(area<1001) return String.format("|%,d|", Math.round(area/10.0)*10);
+        else if(area<50001) return String.format("|%,d|", Math.round(area/10.0)*100);
+        else if(area<1000001) return String.format("|%,d|", Math.round(area/10.0)*1000);
+        else return String.format("|%,d|", Math.round(area/10.0)*100000);
     }
 
 

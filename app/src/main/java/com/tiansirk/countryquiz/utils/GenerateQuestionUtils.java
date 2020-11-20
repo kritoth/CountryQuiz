@@ -30,7 +30,7 @@ public class GenerateQuestionUtils {
             for(Field declaredField : declaredFields) {
                 String question = buildQuestion(name, declaredField);
                 String  rightAnswer = buildRightAnswer(declaredField, country);
-                //List<String>  wrongAnswers = buildWrongAnswers(declaredField, countryJsons, i);
+                List<String>  wrongAnswers = buildWrongAnswers(declaredField, countries, i);
                 //if(!question.isEmpty) questions.add(new Question(i, question, rightAnswer, wrongAnswers));
             }
         }
@@ -84,7 +84,7 @@ public class GenerateQuestionUtils {
             case ("region"):
                 return country.getRegion();
             case ("population"):
-                return roundpopulation(country.getPopulation());
+                return roundPopulation(country.getPopulation());
             case ("area"):
                 return roundArea(country.getArea());
             case ("timezones"):
@@ -106,9 +106,7 @@ public class GenerateQuestionUtils {
     }
 
 
-
-
-    private static String roundpopulation(int population){
+    private static String roundPopulation(int population){
 
     }
 
@@ -118,4 +116,38 @@ public class GenerateQuestionUtils {
     }
 
 
+    private static List<String> buildWrongAnswers(Field countryField, List<Country> countries, int rightAnswerIndex) {
+        List<String> wrongAnswers = new ArrayList<>();
+
+        int[] nums = getUniqueRandomNumbers(NUM_OF_WRONG_ANSWERS, rightAnswerIndex, countries.size());
+
+        for (int i = 0; i < nums.length; i++) {
+            while (true) {
+                String cap = countries.get(nums[i]).getCapital();
+
+
+            }
+        }
+
+        wrongAnswers.add(countries.get(nums[0]).getCapital());
+        wrongAnswers.add(countries.get(nums[1]).getCapital());
+        wrongAnswers.add(countries.get(nums[2]).getCapital());
+
+        return wrongAnswers;
+    }
+
+
+    private static int[] getUniqueRandomNumbers(int numOfNums, int excludeNum, int endNum) {
+        int[] uniqueRandomNums = new int[numOfNums];
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < endNum; i++) {
+            list.add(i);
+        }
+        list.remove(excludeNum);
+        Collections.shuffle(list);
+        for (int i = 0; i < numOfNums; i++) {
+            uniqueRandomNums[i] = list.get(i);
+        }
+        return uniqueRandomNums;
+    }
 }

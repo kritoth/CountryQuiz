@@ -7,7 +7,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -114,7 +116,13 @@ public class GenerateQuestionUtils {
         List<String> wrongAnswers = new ArrayList<>();
         int[] nums = getUniqueRandomNumbers(NUM_OF_WRONG_ANSWERS, rightAnswerIndex, countries.size()); //the rightAnswerIndex must not be among these
         for (int i = 0; i < nums.length; i++) {
-            wrongAnswers.add(buildRightAnswer(countryField,countries.get(nums[i]))); //get a random country, using an index from the unique random numbers array
+            String answ= buildRightAnswer(countryField, countries.get(nums[i]));
+            wrongAnswers.add(answ); //get a random country, using an index from the unique random numbers array
+        }
+        //to make sure no duplicated answers present check with a Set and do some recursion if needed
+        Set <String> set = new HashSet<>(wrongAnswers);
+        if(set.size()<wrongAnswers.size()){
+            buildWrongAnswers(countryField, countries, rightAnswerIndex);
         }
         return wrongAnswers;
     }

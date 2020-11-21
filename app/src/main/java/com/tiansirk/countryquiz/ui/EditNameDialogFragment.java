@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.tiansirk.countryquiz.R;
 
+import static com.tiansirk.countryquiz.MainActivity.TAG_WELCOME_FRAGMENT;
+
 /**
  * A simple {@link Fragment} subclass to prompt the user with creating a profile.
  * Use the {@link EditNameDialogFragment#newInstance} factory method to
@@ -84,7 +86,7 @@ public class EditNameDialogFragment extends DialogFragment implements TextView.O
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (EditorInfo.IME_ACTION_DONE == actionId) {
             // Return input text back to activity through the implemented listener
-            EditNameDialogListener listener = (EditNameDialogListener) getActivity();
+            EditNameDialogListener listener = (EditNameDialogListener) getActivity().getSupportFragmentManager().findFragmentByTag(TAG_WELCOME_FRAGMENT);
             listener.onFinishEditDialog(mEditText.getText().toString());
             // Close the dialog and return back to the parent activity
             dismiss();

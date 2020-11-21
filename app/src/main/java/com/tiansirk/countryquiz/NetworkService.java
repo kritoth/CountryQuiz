@@ -23,8 +23,8 @@ import static android.app.DownloadManager.STATUS_FAILED;
 import static android.app.DownloadManager.STATUS_RUNNING;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 import static com.tiansirk.countryquiz.App.CHANNEL_ID;
-import static com.tiansirk.countryquiz.MainActivity.EXTRA_KEY_RECEIVER;
-import static com.tiansirk.countryquiz.MainActivity.EXTRA_KEY_URL;
+import static com.tiansirk.countryquiz.ui.WelcomeFragment.EXTRA_KEY_RECEIVER;
+import static com.tiansirk.countryquiz.ui.WelcomeFragment.EXTRA_KEY_URL;
 
 /**
  * Own customized {@link IntentService}, for doing a one time job in the background thred. This job is

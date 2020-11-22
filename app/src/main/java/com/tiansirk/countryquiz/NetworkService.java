@@ -14,7 +14,6 @@ import com.tiansirk.countryquiz.utils.GenerateQuestionUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -107,7 +106,8 @@ public class NetworkService extends IntentService {
                     } else {
                         Timber.d("Response succeeded, start parsing");
                         // parse the result then send it back
-                        ArrayList<Level> levels = (ArrayList<Level>) GenerateQuestionUtils.generateLevels(CountryUtils.getCountriesFromJson(response.body().string()));
+                        ArrayList<Level> levels = (ArrayList<Level>) GenerateQuestionUtils
+                                .generateLevels(CountryUtils.getCountriesFromJson(response.body().string()), getApplicationContext());
                         Timber.d("Parsing finished, sending back");
                         b.putParcelableArrayList("results", levels);
                         receiver.send(STATUS_SUCCESSFUL, b);

@@ -85,8 +85,11 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
 
     /** This method is defined in the WelcomeFragment to let retrieve data from it */
     @Override
-    public void onSetupFinished(List<Level> levels) {
-        mLevels = levels;
+    public void onSetupFinished(User user) {
+        Timber.d("User received from WelcomeFragment");
+        mUser = user;
+        //todo: endWelcomFragment();
+        //todo: startMainMenuFragment();
     }
 
     /** This method is defined in the MainMenuFragment to let retrieve data from it */

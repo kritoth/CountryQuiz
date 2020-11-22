@@ -20,6 +20,7 @@ import com.tiansirk.countryquiz.NetworkService;
 import com.tiansirk.countryquiz.databinding.FragmentWelcomeBinding;
 import com.tiansirk.countryquiz.model.Country;
 import com.tiansirk.countryquiz.model.Level;
+import com.tiansirk.countryquiz.model.User;
 import com.tiansirk.countryquiz.utils.CountryUtils;
 import com.tiansirk.countryquiz.utils.GenerateQuestionUtils;
 import com.tiansirk.countryquiz.utils.MyResultReceiver;
@@ -46,11 +47,13 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     private WelcomeFragmentListener listener;
     /** The interface for communication */
     public interface WelcomeFragmentListener{
-        void onSetupFinished(List<Level> questions);
+        void onSetupFinished(User user);
     }
 
     /** Member vars for user */
-    private boolean newUser = true;
+    private boolean newUser = true;//TODO: Ez csak Testing miatt, helyette check Firestore
+    private String userName;
+
     /** Member var for communicating with networking service */
     public MyResultReceiver mReceiver;
 
@@ -134,7 +137,8 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
      */
     @Override
     public void onFinishEditDialog(String inputText) {
-        saveNewUser(inputText);
+        userName = inputText.trim();
+        //saveNewUser(inputText);
     }
 
     /**
@@ -143,7 +147,6 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
      */
     private void saveNewUser(String name){
         //TODO: Save into Firestore
-
         /*SharedPreferences prefs = getSharedPreferences(USER_PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(KEY_SAVED_USER_NAME, username).apply();*/
@@ -186,7 +189,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
             case STATUS_SUCCESSFUL:
                 result = resultData.getParcelableArrayList("results");
                 Timber.d("Question generating resulted");
-                listener.onSetupFinished(result);
+                listener.onSetupFinished(new User(userName, 0, null, result));
                 binding.pbWelcomeFragment.setVisibility(View.INVISIBLE);
                 break;
             case STATUS_FAILED:
@@ -195,14 +198,6 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                 Timber.e("Error in API response: %s", error);
                 break;
         }
-    }
-
-    private static List<Level> generateLevels(List<Country> countries) {
-        return GenerateQuestionUtils.generateLevels(countries);
-    }
-
-    private static List<Country> parseJson(String result) {
-        return CountryUtils.getCountriesFromJson(result);
     }
 
     /** This method will make the Welcome view visible and hide the error message */

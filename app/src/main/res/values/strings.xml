@@ -13,5 +13,17 @@
     <string name="name_main_menu_fragment">Player 1</string>
     <string name="start_main_menu_fragment">Start Game</string>
     <string name="leaderboard_main_menu_fragment">Leader Board</string>
+    <string name="question_topLevelDomain">What is the domain of %s used on the internet?</string>
+    <string name="question_capital">What is the %s of %s?</string>
+    <string name="question_region">In which %s can %s be found?</string>
+    <string name="question_population_and_area">What is the approximate %s in square km of %s?</string>
+    <string name="question_timezones">In which time zone can %s be found?</string>
+    <string name="question_borders">Which country is a neighbor to %s?</string>
+    <string name="question_currencies">Which is the currency of %s?</string>
+    <string name="question_flag">Which is the %s of %s?</string>
+    <string name="answer_no_domain">Has no internet domain</string>
+    <string name="answer_no_timezones">There is no time zone applied</string>
+    <string name="answer_no_borders">Has no neighbor</string>
+    <string name="answer_no_currency">Has no currency applied</string>
 
 </resources>

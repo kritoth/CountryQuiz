@@ -177,23 +177,22 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
      * @param resultData is the data came with the result
      */
     public void onReceiveResult(int resultCode, Bundle resultData) {
-        String result;
+        List<Level> result;
+        String error;
         switch (resultCode) {
             case STATUS_RUNNING:
                 binding.pbWelcomeFragment.setVisibility(View.VISIBLE);
                 break;
             case STATUS_SUCCESSFUL:
-                result = resultData.getString("results");
-                Timber.d("Network call resulted, question generating started");
-                List<Level> questions = generateLevels(parseJson(result));
+                result = resultData.getParcelableArrayList("results");
                 Timber.d("Question generating resulted");
-                listener.onSetupFinished(questions);
+                listener.onSetupFinished(result);
                 binding.pbWelcomeFragment.setVisibility(View.INVISIBLE);
                 break;
             case STATUS_FAILED:
-                result = resultData.getString("failed");
+                error = resultData.getString("failed");
                 showErrorMessage();
-                Timber.e("Error in API response: %s", result);
+                Timber.e("Error in API response: %s", error);
                 break;
         }
     }

@@ -1,5 +1,8 @@
 package com.tiansirk.countryquiz.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.firestore.Exclude;
 
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.List;
 /**
  * Model class for Firestore document: Question
  */
-public class Question {
+public class Question implements Parcelable {
 
     //The auto ID given by Firestore. It is needed to have during queries for identification, sorting, etc purposes
     private String documentId;
@@ -97,4 +100,42 @@ public class Question {
                 ", answered=" + answered +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.documentId);
+        dest.writeInt(this.number);
+        dest.writeString(this.question);
+        dest.writeString(this.rightAnswer);
+        dest.writeStringList(this.wrongAnswers);
+        dest.writeInt(this.earnedPoint);
+        dest.writeByte(this.answered ? (byte) 1 : (byte) 0);
+    }
+
+    protected Question(Parcel in) {
+        this.documentId = in.readString();
+        this.number = in.readInt();
+        this.question = in.readString();
+        this.rightAnswer = in.readString();
+        this.wrongAnswers = in.createStringArrayList();
+        this.earnedPoint = in.readInt();
+        this.answered = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<Question> CREATOR = new Parcelable.Creator<Question>() {
+        @Override
+        public Question createFromParcel(Parcel source) {
+            return new Question(source);
+        }
+
+        @Override
+        public Question[] newArray(int size) {
+            return new Question[size];
+        }
+    };
 }

@@ -1,5 +1,8 @@
 package com.tiansirk.countryquiz.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.firestore.Exclude;
 
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.List;
 /**
  * Model class for Firestore document: Level
  */
-public class Level {
+public class Level implements Parcelable {
 
     //The auto ID given by Firestore. It is needed to have during queries for identification, sorting, etc purposes
     private String documentId;
@@ -75,4 +78,38 @@ public class Level {
                 ", succeeded=" + succeeded +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.documentId);
+        dest.writeInt(this.level);
+        dest.writeTypedList(this.questions);
+        dest.writeInt(this.achievedPoints);
+        dest.writeByte(this.succeeded ? (byte) 1 : (byte) 0);
+    }
+
+    protected Level(Parcel in) {
+        this.documentId = in.readString();
+        this.level = in.readInt();
+        this.questions = in.createTypedArrayList(Question.CREATOR);
+        this.achievedPoints = in.readInt();
+        this.succeeded = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<Level> CREATOR = new Parcelable.Creator<Level>() {
+        @Override
+        public Level createFromParcel(Parcel source) {
+            return new Level(source);
+        }
+
+        @Override
+        public Level[] newArray(int size) {
+            return new Level[size];
+        }
+    };
 }

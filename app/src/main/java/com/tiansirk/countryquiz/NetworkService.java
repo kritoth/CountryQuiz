@@ -8,7 +8,13 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.ResultReceiver;
 
+import com.tiansirk.countryquiz.model.Level;
+import com.tiansirk.countryquiz.utils.CountryUtils;
+import com.tiansirk.countryquiz.utils.GenerateQuestionUtils;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -76,13 +82,12 @@ public class NetworkService extends IntentService {
      */
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Timber.d("Starting service for OkHttp");
+        Timber.d("Starting IntentService");
         final ResultReceiver receiver = intent.getParcelableExtra(EXTRA_KEY_RECEIVER);
         String url = intent.getStringExtra(EXTRA_KEY_URL);
         final Bundle b = new Bundle();
         if (url.equals(URL_ALL_COUNTRY)) {
             receiver.send(STATUS_RUNNING, Bundle.EMPTY);
-
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(url)
@@ -100,9 +105,11 @@ public class NetworkService extends IntentService {
                         receiver.send(STATUS_FAILED, b);
                         throw new IOException("Unexpected code " + response);
                     } else {
-                        Timber.d("Response succeeded within okHttp");
+                        Timber.d("Response succeeded, start parsing");
                         // parse the result then send it back
-                        b.putString("results", response.body().string());
+                        ArrayList<Level> levels = (ArrayList<Level>) GenerateQuestionUtils.generateLevels(CountryUtils.getCountriesFromJson(response.body().string()));
+                        Timber.d("Parsing finished, sending back");
+                        b.putParcelableArrayList("results", levels);
                         receiver.send(STATUS_SUCCESSFUL, b);
                     }
                 }

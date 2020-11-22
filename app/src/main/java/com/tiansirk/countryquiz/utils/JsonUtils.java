@@ -53,7 +53,7 @@ public class JsonUtils {
      * to convert a JSON string to equivalent Java objects.
      * @return the List of {@link CountryJson}s
      */
-    public static List<CountryJson> getCountriesFromJson(String json){
+    public static List<CountryJson> getCountryJsonsFromJson(String json){
         //Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         Gson gson = new Gson();
         Type countryListType = new TypeToken<ArrayList<CountryJson>>(){}.getType();

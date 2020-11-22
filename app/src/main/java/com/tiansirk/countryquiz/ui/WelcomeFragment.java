@@ -17,11 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tiansirk.countryquiz.NetworkService;
-import com.tiansirk.countryquiz.R;
-import com.tiansirk.countryquiz.data.Repository;
 import com.tiansirk.countryquiz.databinding.FragmentWelcomeBinding;
 import com.tiansirk.countryquiz.model.Country;
-import com.tiansirk.countryquiz.model.Question;
+import com.tiansirk.countryquiz.model.Level;
 import com.tiansirk.countryquiz.utils.CountryUtils;
 import com.tiansirk.countryquiz.utils.GenerateQuestionUtils;
 import com.tiansirk.countryquiz.utils.MyResultReceiver;
@@ -48,7 +46,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     private WelcomeFragmentListener listener;
     /** The interface for communication */
     public interface WelcomeFragmentListener{
-        void onSetupFinished(List<Question> questions);
+        void onSetupFinished(List<Level> questions);
     }
 
     /** Member vars for user */
@@ -187,7 +185,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
             case STATUS_SUCCESSFUL:
                 result = resultData.getString("results");
                 Timber.d("Network call resulted, question generating started");
-                List<Question> questions = generateQuestions(parseJson(result));
+                List<Level> questions = generateLevels(parseJson(result));
                 Timber.d("Question generating resulted");
                 listener.onSetupFinished(questions);
                 binding.pbWelcomeFragment.setVisibility(View.INVISIBLE);
@@ -200,8 +198,8 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
         }
     }
 
-    private static List<Question> generateQuestions(List<Country> countries) {
-        return GenerateQuestionUtils.generateQuestions(countries);
+    private static List<Level> generateLevels(List<Country> countries) {
+        return GenerateQuestionUtils.generateLevels(countries);
     }
 
     private static List<Country> parseJson(String result) {

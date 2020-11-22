@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
 
     /** Member vars for the game */
     private User mUser;
-    private Level mLevel;
+    private List<Level> mLevels;
     private List<Question> mQuestions;
 
     /** Member vars for fragments of this activity */
@@ -83,13 +83,13 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
         ft.add(R.id.container_main_menu, mainMenuFragment, TAG_MAIN_MENU_FRAGMENT);
     }
 
-    /** This method is defined in the WelcomeFragment to send data from it */
+    /** This method is defined in the WelcomeFragment to let retrieve data from it */
     @Override
-    public void onSetupFinished(List<Question> questions) {
-        mQuestions = questions;
+    public void onSetupFinished(List<Level> levels) {
+        mLevels = levels;
     }
 
-    /** This method is defined in the MainMenuFragment to send data from it */
+    /** This method is defined in the MainMenuFragment to let retrieve data from it */
     @Override
     public void userExists() {
 

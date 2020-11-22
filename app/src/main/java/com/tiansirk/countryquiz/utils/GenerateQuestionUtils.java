@@ -1,6 +1,7 @@
 package com.tiansirk.countryquiz.utils;
 
 import com.tiansirk.countryquiz.model.Country;
+import com.tiansirk.countryquiz.model.Level;
 import com.tiansirk.countryquiz.model.Question;
 
 import java.lang.reflect.Field;
@@ -15,6 +16,28 @@ import timber.log.Timber;
 
 public class GenerateQuestionUtils {
     public static final int NUM_OF_WRONG_ANSWERS = 3;
+    public static final int NUMBER_OF_QUESTIONS_IN_A_LEVEL = 10;
+
+    /** Generates {@link Level}s for the countries received. The levels returned as list.*/
+    public static List<Level> generateLevels(List<Country> countries) {
+        List<Question> questions = generateQuestions(countries);
+        Collections.shuffle(questions); // Ensures unique ordering
+
+        List<Level> levels = new ArrayList<>();
+        int numOfLevels = questions.size()/NUMBER_OF_QUESTIONS_IN_A_LEVEL;//ha nem osztható akkor +1
+            for(int i=0; i<numOfLevels; i++){
+                levels.add(new Level(i+1, questions
+                        .subList(i* NUMBER_OF_QUESTIONS_IN_A_LEVEL,i*NUMBER_OF_QUESTIONS_IN_A_LEVEL+NUMBER_OF_QUESTIONS_IN_A_LEVEL),
+                        0, false));
+            }
+
+        Timber.d("Num of levels: " +levels.size()
+                + "\nFirst level num of questions: " +levels.get(0).getQuestions().size()
+                + "\nLast level num of questions: " +levels.get(levels.size()-1).getQuestions().size()
+                + "\nFirst question: " +levels.get(0).getQuestions().get(0)
+                + "\nAlmost last question: " +levels.get(levels.size()-1).getQuestions().get(0));
+        return levels;
+    }
 
     /** Generates {@link Question}s for the countries received. The questions returned as list.*/
     public static List<Question> generateQuestions(List<Country> countries) {
@@ -24,21 +47,21 @@ public class GenerateQuestionUtils {
             String name = country.getName();
             Field[] declFields = country.getClass().getDeclaredFields();
             List<Field> declaredFields = new ArrayList<>(Arrays.asList(declFields));
-
-            for(Field declaredField : declaredFields) {
+            Collections.shuffle(declaredFields); // Ensures unique ordering
+            for (Field declaredField : declaredFields) {
                 String question = buildQuestion(name, declaredField);
-                if(question.isEmpty()) continue;// if question is empty the field is not relevant!
-                String  rightAnswer = buildRightAnswer(declaredField, country);
-                List<String>  wrongAnswers = buildWrongAnswers(declaredField, countries, i);
+                if (question.isEmpty()) continue;// if question is empty the field is not relevant!
+                String rightAnswer = buildRightAnswer(declaredField, country);
+                List<String> wrongAnswers = buildWrongAnswers(declaredField, countries, i);
                 questions.add(new Question(i, question, rightAnswer, wrongAnswers));
             }
         }
-        Timber.d("Generated questions: #%s", questions.size());
+        Timber.d("No. of generated questions: #%s", questions.size());
         return questions;
     }
 
-    /** Building the question for the country received with using the field received.
-     * If the field is not relevant, an empty string is returned.*/
+        /** Building the question for the country received with using the field received.
+         * If the field is not relevant, an empty string is returned.*/
     private static String buildQuestion(String countryName, Field countryField) {
         String subject = countryField.getName();
         switch(subject) {

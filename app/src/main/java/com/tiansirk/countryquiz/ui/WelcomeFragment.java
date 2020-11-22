@@ -41,7 +41,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     public static final String EXTRA_KEY_URL = "com.tiansirk.countryquiz.extra_key_url";
     public static final String EXTRA_KEY_RECEIVER = "com.tiansirk.countryquiz.extra_key_receiver";
 
-    //** Member vars for views */
+    /** Member vars for views */
     private FragmentWelcomeBinding binding;
 
     /** Member var for own custom communication listener */
@@ -191,7 +191,6 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                 Timber.d("Question generating resulted");
                 listener.onSetupFinished(questions);
                 binding.pbWelcomeFragment.setVisibility(View.INVISIBLE);
-                binding.tvWelcomeFragment.setText(questions.get(100).toString());//TODO: delete!! ez CSAK Testing
                 break;
             case STATUS_FAILED:
                 result = resultData.getString("failed");

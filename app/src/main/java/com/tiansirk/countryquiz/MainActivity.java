@@ -1,55 +1,42 @@
 package com.tiansirk.countryquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import timber.log.Timber;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
-import android.widget.Toast;
-
-import static android.app.DownloadManager.STATUS_FAILED;
-import static android.app.DownloadManager.STATUS_RUNNING;
-import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 
 import com.tiansirk.countryquiz.data.Repository;
 import com.tiansirk.countryquiz.databinding.ActivityMainBinding;
-import com.tiansirk.countryquiz.model.Country;
 import com.tiansirk.countryquiz.model.Level;
 import com.tiansirk.countryquiz.model.Question;
 import com.tiansirk.countryquiz.model.User;
-import com.tiansirk.countryquiz.ui.EditNameDialogFragment;
+import com.tiansirk.countryquiz.ui.MainMenuFragment;
 import com.tiansirk.countryquiz.ui.WelcomeFragment;
-import com.tiansirk.countryquiz.utils.CountryUtils;
-import com.tiansirk.countryquiz.utils.GenerateQuestionUtils;
 import com.tiansirk.countryquiz.utils.MyDebugTree;
 import com.tiansirk.countryquiz.utils.MyReleaseTree;
-import com.tiansirk.countryquiz.utils.MyResultReceiver;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements WelcomeFragment.WelcomeFragmentListener {
+public class MainActivity extends AppCompatActivity implements WelcomeFragment.WelcomeFragmentListener, MainMenuFragment.MainMenuFragmentListener {
 
     public static final String USER_PREFERENCES = MainActivity.class.getPackage().getName().concat("_userPrefs");
     public static final String KEY_SAVED_USER_NAME = "userName";
     public static final String TAG_WELCOME_FRAGMENT = "welcome_fragment";
+    public static final String TAG_MAIN_MENU_FRAGMENT = "main_menu_fragment";
 
 
     private ActivityMainBinding binding;
 
-    /** Member vars for user */
+    /** Member vars for the game */
     private User mUser;
     private Level mLevel;
     private List<Question> mQuestions;
 
     /** Member vars for fragments of this activity */
     private WelcomeFragment welcomeFragment;
-
+    private MainMenuFragment mainMenuFragment;
 
     private Repository mRepository;
 
@@ -62,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
 
         initTimber();
         initWelcomeFragment();
+        initMainMenuFragment();//TODO Csak ha végzett a WelcomFragment
     }
 
     /* Setup Firestore EventListener here in order to spare bandwith usage while the app is not in foreground */
@@ -88,9 +76,22 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
         ft.commit();
     }
 
+    private void initMainMenuFragment(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        mainMenuFragment = new MainMenuFragment();
+        ft.add(R.id.container_main_menu, mainMenuFragment, TAG_MAIN_MENU_FRAGMENT);
+    }
 
+    /** This method is defined in the WelcomeFragment to send data from it */
     @Override
     public void onSetupFinished(List<Question> questions) {
+        mQuestions = questions;
+    }
+
+    /** This method is defined in the MainMenuFragment to send data from it */
+    @Override
+    public void userExists() {
 
     }
 }

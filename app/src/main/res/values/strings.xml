@@ -5,5 +5,13 @@
     <string name="done">Done</string>
     <string name="your_name">Your Name</string>
     <string name="error_message">An error occurred. Try again later.</string>
+    <!-- WelcomeFragment -->
     <string name="welcome_fragment">Welcome to Country Quiz!</string>
+    <!-- MainMenuFragment -->
+    <string name="title_main_menu_fragment">Country Quiz</string>
+    <string name="high_score_main_menu_fragment">High Score:</string>
+    <string name="name_main_menu_fragment">Player 1</string>
+    <string name="start_main_menu_fragment">Start Game</string>
+    <string name="leaderboard_main_menu_fragment">Leader Board</string>
+
 </resources>

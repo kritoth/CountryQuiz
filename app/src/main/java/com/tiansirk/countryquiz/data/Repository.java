@@ -7,17 +7,27 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.tiansirk.countryquiz.model.Identifiable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import timber.log.Timber;
 
 public class Repository<TEntity extends Identifiable<String>> {
 
-    private Context activityContext;
+    public interface EntityChangeListener{
+        void onEvent(DocumentSnapshot documentSnapshot);
+    }
+    private EntityChangeListener listener;
+
+    private Activity activity;
     private final Class<TEntity> entityClass;
 
     private final CollectionReference collectionReference;
@@ -27,8 +37,8 @@ public class Repository<TEntity extends Identifiable<String>> {
      * Initializes the repository storing the data in the given collection.
      * {@param FirebaseFirestore#collection(String)}.
      */
-    public Repository(Context activityContext, Class<TEntity> entityClass, String collectionName) {
-        this.activityContext = activityContext;
+    public Repository(Activity activity, Class<TEntity> entityClass, String collectionName) {
+        this.activity = activity;
         this.collectionName = collectionName;
         this.entityClass = entityClass;
 
@@ -66,6 +76,23 @@ public class Repository<TEntity extends Identifiable<String>> {
                 } else {
                     Timber.d( "Document '" + documentName + "' does not exist in '" + collectionName + "'.");
                     return entityClass.newInstance();
+                }
+            }
+        });
+    }
+
+    public void listenToChanges(TEntity entity){
+        final String documentId = entity.getEntityKey();
+        collectionReference.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Timber.e(error);
+                    return;
+                }
+                for (DocumentChange dc : value.getDocumentChanges()) {
+                    DocumentSnapshot documentSnapshot = dc.getDocument();
+                    listener.onEvent(documentSnapshot);
                 }
             }
         });

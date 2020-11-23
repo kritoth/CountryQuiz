@@ -1,5 +1,6 @@
 package com.tiansirk.countryquiz.data;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.google.android.gms.tasks.Continuation;
@@ -38,14 +39,14 @@ public class Repository<TEntity extends Identifiable<String>> {
     }
 
     /** READ */
-    public Task<Boolean> exists(final String documentName) {
-        DocumentReference documentReference = collectionReference.document(documentName);
-        Timber.i("Checking existence of '" + documentName + "' in '" + collectionName + "'.");
+    public Task<Boolean> exists(final String documentId) {
+        DocumentReference documentReference = collectionReference.document(documentId);
+        Timber.i("Checking existence of '" + documentId + "' in '" + collectionName + "'.");
 
         return documentReference.get().continueWith(new Continuation<DocumentSnapshot, Boolean>() {
             @Override
             public Boolean then(@NonNull Task<DocumentSnapshot> task) {
-                Timber.d("Checking if '" + documentName + "' exists in '" + collectionName +"'.");
+                Timber.d("Checking if '" + documentId + "' exists in '" + collectionName +"'.");
                 return task.getResult().exists();
             }
         });
@@ -72,40 +73,40 @@ public class Repository<TEntity extends Identifiable<String>> {
 
     /** CREATE */
     public Task<Void> create(TEntity entity) {
-        final String documentName = entity.getEntityKey();
-        DocumentReference documentReference = collectionReference.document(documentName);
-        Timber.i( "Creating '" + documentName + "' in '" + collectionName + "'.");
+        final String documentId = entity.getEntityKey();
+        DocumentReference documentReference = collectionReference.document(documentId);
+        Timber.i( "Creating '" + documentId + "' in '" + collectionName + "'.");
         return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Timber.e(e, "There was an error creating '" + documentName + "' in '" + collectionName + "'!");
+                Timber.e(e, "There was an error creating '" + documentId + "' in '" + collectionName + "'!");
             }
         });
     }
 
     /** UPDATE */
     public Task<Void> update(TEntity entity) {
-        final String documentName = entity.getEntityKey();
-        DocumentReference documentReference = collectionReference.document(documentName);
-        Timber.i( "Updating '" + documentName + "' in '" + collectionName + "'.");
+        final String documentId = entity.getEntityKey();
+        DocumentReference documentReference = collectionReference.document(documentId);
+        Timber.i( "Updating '" + documentId + "' in '" + collectionName + "'.");
 
         return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Timber.e(e, "There was an error updating '" + documentName + "' in '" + collectionName + "'.");
+                Timber.e(e, "There was an error updating '" + documentId + "' in '" + collectionName + "'.");
             }
         });
     }
 
     /** DELETE */
-    public Task<Void> delete(final String documentName) {
-        DocumentReference documentReference = collectionReference.document(documentName);
-        Timber.i( "Deleting '" + documentName + "' in '" + collectionName + "'.");
+    public Task<Void> delete(final String documentId) {
+        DocumentReference documentReference = collectionReference.document(documentId);
+        Timber.i( "Deleting '" + documentId + "' in '" + collectionName + "'.");
 
         return documentReference.delete().addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Timber.e(e, "There was an error deleting '" + documentName + "' in '" + collectionName + "'.");
+                Timber.e(e, "There was an error deleting '" + documentId + "' in '" + collectionName + "'.");
             }
         });
     }

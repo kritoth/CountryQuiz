@@ -19,24 +19,31 @@ import com.tiansirk.countryquiz.model.User;
 
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MainMenuFragment#newInstance} factory method to
- * create an instance of this fragment.
+/** A simple {@link Fragment} subclass.
+ * Use the {@link MainMenuFragment.MainMenuFragmentListener} interface for to communicate with this fragment.
  */
 public class MainMenuFragment extends Fragment {
 
-    /** Member vars for views */
+    /**
+     * Member vars for views
+     */
     private FragmentMainMenuBinding binding;
 
-    /** Member var for own custom communication listener */
+    /**
+     * Member var for own custom communication listener
+     */
     private MainMenuFragmentListener listener;
-    /** The interface for communication */
-    public interface MainMenuFragmentListener{
-        void userExists();
+
+    /**
+     * The interface for communication
+     */
+    public interface MainMenuFragmentListener {
+        void onStartGameClicked();
     }
 
-    /** Member vars for game */
+    /**
+     * Member vars for game
+     */
     private User mUser;
     private Level mLevel;
     private List<Question> mQuestions;
@@ -65,8 +72,10 @@ public class MainMenuFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    /** When this fragment is attached to its host activity, ie {@link com.tiansirk.countryquiz.MainActivity} the listener interface is connected
+    /**
+     * When this fragment is attached to its host activity, ie {@link com.tiansirk.countryquiz.MainActivity} the listener interface is connected
      * If not then an error exception is thrown to notify the developer.
+     *
      * @param context
      */
     @Override
@@ -80,7 +89,9 @@ public class MainMenuFragment extends Fragment {
         }
     }
 
-    /** When this fragment is detached from the host, the listeners is set to null, to decouple. */
+    /**
+     * When this fragment is detached from the host, the listeners is set to null, to decouple.
+     */
     @Override
     public void onDetach() {
         super.onDetach();

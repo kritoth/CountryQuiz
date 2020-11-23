@@ -1,6 +1,7 @@
 package com.tiansirk.countryquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import timber.log.Timber;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
 
         initTimber();
         initWelcomeFragment();
-        initMainMenuFragment();//TODO Csak ha végzett a WelcomFragment
+        initMainMenuFragment();
     }
 
     /* Setup Firestore EventListener here in order to spare bandwith usage while the app is not in foreground */
@@ -72,7 +73,8 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         welcomeFragment = new WelcomeFragment();
-        ft.add(R.id.container_welcome, welcomeFragment, TAG_WELCOME_FRAGMENT);
+        ft.replace(R.id.container_welcome, welcomeFragment, TAG_WELCOME_FRAGMENT);
+        ft.disallowAddToBackStack();
         ft.commit();
     }
 
@@ -81,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
         FragmentTransaction ft = fragmentManager.beginTransaction();
         mainMenuFragment = new MainMenuFragment();
         ft.add(R.id.container_main_menu, mainMenuFragment, TAG_MAIN_MENU_FRAGMENT);
+        ft.addToBackStack(TAG_MAIN_MENU_FRAGMENT);
+        ft.commit();
+        showHideFragment(mainMenuFragment);
     }
 
     /** This method is defined in the WelcomeFragment to let retrieve data from it */
@@ -88,13 +93,30 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
     public void onSetupFinished(User user) {
         Timber.d("User received from WelcomeFragment");
         mUser = user;
-        //todo: endWelcomFragment();
-        //todo: startMainMenuFragment();
+        detachWelcomeFragment();
+        showHideFragment(mainMenuFragment);
     }
 
     /** This method is defined in the MainMenuFragment to let retrieve data from it */
     @Override
-    public void userExists() {
+    public void onStartGameClicked() {
 
+    }
+
+    /** This ends the WelcomeFragment permanently */
+    private void detachWelcomeFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.detach(welcomeFragment);
+        ft.commit();
+    }
+
+    /** Shows or hides the {@param fragment} according to its current state */
+    private void showHideFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        if(fragment.isHidden()) ft.show(fragment);
+        else ft.hide(fragment);
+        ft.commit();
     }
 }

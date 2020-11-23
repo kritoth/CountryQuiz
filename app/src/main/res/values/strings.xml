@@ -7,6 +7,7 @@
     <string name="error_message">An error occurred. Try again later.</string>
     <!-- WelcomeFragment -->
     <string name="welcome_fragment">Welcome to Country Quiz!</string>
+    <string name="welcome_fragment_2">Loading data may take a few seconds. Please wait.</string>
     <!-- MainMenuFragment -->
     <string name="title_main_menu_fragment">Country Quiz</string>
     <string name="high_score_main_menu_fragment">High Score:</string>

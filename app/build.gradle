@@ -41,6 +41,10 @@ dependencies {
     implementation platform ("com.google.firebase:firebase-bom:${rootProject.firebaseBomVersion}")
     //Cloud Firestore library, by using the BoM don't specify versions
     implementation 'com.google.firebase:firebase-firestore'
+    //Firebase Authentication
+    implementation 'com.google.firebase:firebase-auth'
+
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     testImplementation 'junit:junit:4.13'

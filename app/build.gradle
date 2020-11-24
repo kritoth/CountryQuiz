@@ -44,7 +44,7 @@ dependencies {
     //Firebase Authentication
     implementation 'com.google.firebase:firebase-auth'
 
-
+    implementation "androidx.activity:activity:${rootProject.activityVersion}"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     testImplementation 'junit:junit:4.13'

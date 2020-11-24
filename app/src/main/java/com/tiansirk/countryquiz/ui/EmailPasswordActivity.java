@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -29,9 +30,8 @@ public class EmailPasswordActivity extends AppCompatActivity implements
 
     private ActivityEmailPasswordBinding binding;
 
-    // [START declare_auth]
     private FirebaseAuth mAuth;
-    // [END declare_auth]
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +65,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements
         if (!validateForm()) {
             return;
         }
-
         showProgressBar();
-
         // [START create_user_with_email]
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -76,8 +74,12 @@ public class EmailPasswordActivity extends AppCompatActivity implements
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Timber.d("createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            mUser = mAuth.getCurrentUser();
+                            updateUI(mUser);
+                            Intent returnIntent = new Intent();
+                            returnIntent.putExtra("result", mUser);
+                            setResult(Activity.RESULT_OK,returnIntent);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Timber.e(task.getException(), "createUserWithEmail:failure");
@@ -105,9 +107,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements
         if (!validateForm()) {
             return;
         }
-
         showProgressBar();
-
         // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -116,19 +116,19 @@ public class EmailPasswordActivity extends AppCompatActivity implements
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Timber.d("signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            mUser = mAuth.getCurrentUser();
+                            updateUI(mUser);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Timber.e(task.getException(), "signInWithEmail:failure");
                             Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
-                            // [START_EXCLUDE]
-                            checkForMultiFactorFailure(task.getException());
-                            // [END_EXCLUDE]
-                        }
 
+                            checkForMultiFactorFailure(task.getException());
+
+                        }
                         // [START_EXCLUDE]
                         if (!task.isSuccessful()) {
                             binding.status.setText(R.string.auth_failed);
@@ -138,6 +138,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements
                     }
                 });
         // [END sign_in_with_email]
+
     }
 
     private void signOut() {
@@ -151,8 +152,8 @@ public class EmailPasswordActivity extends AppCompatActivity implements
 
         // Send verification email
         // [START send_email_verification]
-        final FirebaseUser user = mAuth.getCurrentUser();
-        user.sendEmailVerification()
+        mUser = mAuth.getCurrentUser();
+        mUser.sendEmailVerification()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -162,7 +163,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements
 
                         if (task.isSuccessful()) {
                             Toast.makeText(EmailPasswordActivity.this,
-                                    "Verification email sent to " + user.getEmail(),
+                                    "Verification email sent to " + mUser.getEmail(),
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             Timber.e(task.getException(), "sendEmailVerification");
@@ -233,6 +234,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements
             } else {
                 binding.verifyEmailButton.setVisibility(View.VISIBLE);
             }
+            finish();
         } else {
             binding.status.setText(R.string.signed_out);
             binding.detail.setText(null);
@@ -240,6 +242,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements
             binding.emailPasswordButtons.setVisibility(View.VISIBLE);
             binding.emailPasswordFields.setVisibility(View.VISIBLE);
             binding.signedInButtons.setVisibility(View.GONE);
+            finish();
         }
     }
 
@@ -253,7 +256,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements
             MultiFactorResolver resolver = ((FirebaseAuthMultiFactorException) e).getResolver();
             intent.putExtra("EXTRA_MFA_RESOLVER", resolver);
             //setResult(MultiFactorActivity.RESULT_NEEDS_MFA_SIGN_IN, intent); //No MFA enabled
-            finish();
+
         }
     }
 

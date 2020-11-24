@@ -173,7 +173,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
             case STATUS_SUCCESSFUL:
                 result = resultData.getParcelableArrayList("results");
                 Timber.d("Question generating resulted");
-                listener.onSetupFinished(new User(userName, 0, null, result));
+                listener.onSetupFinished(new User(null, userName, 0, null, result));
                 binding.pbWelcomeFragment.setVisibility(View.INVISIBLE);
                 break;
             case STATUS_FAILED:

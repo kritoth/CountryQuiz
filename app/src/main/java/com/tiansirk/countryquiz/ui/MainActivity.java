@@ -4,10 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
 import timber.log.Timber;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.tiansirk.countryquiz.BuildConfig;
 import com.tiansirk.countryquiz.R;
@@ -28,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     public static final String KEY_SAVED_USER_NAME = "userName";
     public static final String TAG_WELCOME_FRAGMENT = "welcome_fragment";
     public static final String TAG_MAIN_MENU_FRAGMENT = "main_menu_fragment";
+    private static final String COLLECTION_NAME = "users";
+    public static final int LAUNCH_SECOND_ACTIVITY = 1;
 
 
     private ActivityMainBinding binding;
@@ -52,24 +60,75 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         setTitle(getString(R.string.app_title));//Sets the title in the action bar
 
         initTimber();
-        initWelcomeFragment();
-        initMainMenuFragment();
     }
 
     /* Setup Firestore EventListener here in order to spare bandwith usage while the app is not in foreground */
     @Override
     protected void onStart() {
         super.onStart();
-        //setupEventListener();//TODO: Kell külön initFireStore() az onCreate-ben?
+        initFireStore();
+        checkUser();
     }
 
-    /** Initiates the logging utility called Timber, see: https://github.com/JakeWharton/timber */
-    private void initTimber(){
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new MyDebugTree());
+    private void initFireStore(){
+        Timber.i("Initializing Repository");
+        mRepository = new Repository(this, User.class, COLLECTION_NAME);
+    }
+
+    private void checkUser(){
+        Timber.i("Checking user auth");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Timber.i("User exists, getting from DB");
+            getUserFromDb(user);
         } else {
-            Timber.plant(new MyReleaseTree());
+            Timber.i("User NOT exists, starting authActivity");
+            startAuthActivity();
+
         }
+    }
+
+    private void startAuthActivity(){
+        Intent activityIntent = new Intent(this, EmailPasswordActivity.class);
+        startActivityForResult(activityIntent, LAUNCH_SECOND_ACTIVITY);
+    }
+
+    private void getUserFromDb(FirebaseUser user){
+        // Name, email address, and profile photo Url
+        String name = user.getDisplayName();
+        String email = user.getEmail();
+        // Check if user's email is verified
+        boolean emailVerified = user.isEmailVerified();
+        // The user's ID, unique to the Firebase project. Do NOT use this value to authenticate with your backend server,
+        // if you have one. Use FirebaseUser.getIdToken() instead.
+        String uid = user.getUid();
+        Timber.i("Retrieving User from DB");
+        mRepository.get(uid).addOnSuccessListener(new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                mUser = (User) o;
+                Timber.i("User retireved: %s", mUser.toString());
+                initMainMenuFragment();
+            }
+        });
+
+    }
+
+    private void saveUserToDb(FirebaseUser user){
+        // Name, email address, and profile photo Url
+        String name = user.getDisplayName();
+        String email = user.getEmail();
+        // Check if user's email is verified
+        boolean emailVerified = user.isEmailVerified();
+        // The user's ID, unique to the Firebase project. Do NOT use this value to authenticate with your backend server,
+        // if you have one. Use FirebaseUser.getIdToken() instead.
+        String uid = user.getUid();
+
+        mUser = new User(uid, name);
+        Timber.i("Saving user to DB: " + mUser.toString());
+        mRepository.create(mUser);
+
+        initMainMenuFragment();
     }
 
     private void initWelcomeFragment(){
@@ -82,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     }
 
     private void initMainMenuFragment(){
+        Timber.i("Initializing MainMenuFragment");
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         mainMenuFragment = new MainMenuFragment();
@@ -116,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     /** Shows or hides the {@param fragment} according to its current state */
     private void showHideFragment(Fragment fragment){
+        Timber.i("Calling method with: %s", fragment.toString());
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         if(fragment.isHidden()) ft.show(fragment);
@@ -127,5 +188,29 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     @Override
     public void onEvent(DocumentSnapshot documentSnapshot) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
+            if(resultCode == Activity.RESULT_OK){
+                FirebaseUser user = data.getParcelableExtra("result");
+                saveUserToDb(user);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }
+
+    /** Initiates the logging utility called Timber, see: https://github.com/JakeWharton/timber */
+    private void initTimber(){
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new MyDebugTree());
+        } else {
+            Timber.plant(new MyReleaseTree());
+        }
     }
 }

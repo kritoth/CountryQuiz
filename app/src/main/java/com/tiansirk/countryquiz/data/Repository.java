@@ -72,6 +72,7 @@ public class Repository<TEntity extends Identifiable<String>> {
             public TEntity then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 if (documentSnapshot.exists()) {
+                    Timber.i("returning documentSnapshot");
                     return documentSnapshot.toObject(entityClass);
                 } else {
                     Timber.d( "Document '" + documentName + "' does not exist in '" + collectionName + "'.");

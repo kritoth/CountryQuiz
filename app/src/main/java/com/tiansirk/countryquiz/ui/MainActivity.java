@@ -1,4 +1,4 @@
-package com.tiansirk.countryquiz;
+package com.tiansirk.countryquiz.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -8,19 +8,21 @@ import timber.log.Timber;
 
 import android.os.Bundle;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.tiansirk.countryquiz.BuildConfig;
+import com.tiansirk.countryquiz.R;
 import com.tiansirk.countryquiz.data.Repository;
 import com.tiansirk.countryquiz.databinding.ActivityMainBinding;
 import com.tiansirk.countryquiz.model.Level;
 import com.tiansirk.countryquiz.model.Question;
 import com.tiansirk.countryquiz.model.User;
-import com.tiansirk.countryquiz.ui.MainMenuFragment;
-import com.tiansirk.countryquiz.ui.WelcomeFragment;
 import com.tiansirk.countryquiz.utils.MyDebugTree;
 import com.tiansirk.countryquiz.utils.MyReleaseTree;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements WelcomeFragment.WelcomeFragmentListener, MainMenuFragment.MainMenuFragmentListener {
+public class MainActivity extends AppCompatActivity implements Repository.EntityChangeListener,
+        WelcomeFragment.WelcomeFragmentListener, MainMenuFragment.MainMenuFragmentListener {
 
     public static final String USER_PREFERENCES = MainActivity.class.getPackage().getName().concat("_userPrefs");
     public static final String KEY_SAVED_USER_NAME = "userName";
@@ -45,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(ActivityMainBinding.inflate(getLayoutInflater()).getRoot());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         setTitle(getString(R.string.app_title));//Sets the title in the action bar
 
         initTimber();
@@ -118,5 +121,11 @@ public class MainActivity extends AppCompatActivity implements WelcomeFragment.W
         if(fragment.isHidden()) ft.show(fragment);
         else ft.hide(fragment);
         ft.commit();
+    }
+
+    /** This method is defined in the Repository to let retrieve data from it */
+    @Override
+    public void onEvent(DocumentSnapshot documentSnapshot) {
+
     }
 }

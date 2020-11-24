@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.tiansirk.countryquiz.R;
 
-import static com.tiansirk.countryquiz.MainActivity.TAG_WELCOME_FRAGMENT;
+import static com.tiansirk.countryquiz.ui.MainActivity.TAG_WELCOME_FRAGMENT;
 
 /**
  * A simple {@link Fragment} subclass to prompt the user with creating a profile.

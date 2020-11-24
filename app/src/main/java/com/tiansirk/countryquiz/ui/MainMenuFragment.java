@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tiansirk.countryquiz.R;
 import com.tiansirk.countryquiz.databinding.FragmentMainMenuBinding;
 import com.tiansirk.countryquiz.model.Level;
 import com.tiansirk.countryquiz.model.Question;
@@ -73,7 +72,7 @@ public class MainMenuFragment extends Fragment {
     }
 
     /**
-     * When this fragment is attached to its host activity, ie {@link com.tiansirk.countryquiz.MainActivity} the listener interface is connected
+     * When this fragment is attached to its host activity, ie {@link MainActivity} the listener interface is connected
      * If not then an error exception is thrown to notify the developer.
      *
      * @param context

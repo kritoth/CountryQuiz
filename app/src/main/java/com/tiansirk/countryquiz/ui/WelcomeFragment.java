@@ -37,65 +37,27 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     public static final String EXTRA_KEY_URL = "com.tiansirk.countryquiz.extra_key_url";
     public static final String EXTRA_KEY_RECEIVER = "com.tiansirk.countryquiz.extra_key_receiver";
 
-    /**
-     * Member vars for views
-     */
+    /** Member var for views */
     private FragmentWelcomeBinding binding;
-
-    /**
-     * Member var for own custom communication listener
-     */
+    /** Member var for own custom communication listener */
     private WelcomeFragmentListener listener;
-
-    /**
-     * The interface for communication
-     */
+    /** The interface for communication */
     public interface WelcomeFragmentListener {
         void onSetupFinished(User user);
     }
-
-    /**
-     * Member vars for user
-     */
+    /** Member vars for user */
     private boolean newUser = true;//TODO: Ez csak Testing miatt, helyette check Firestore
     private String userName;
-
-    /**
-     * Member var for communicating with networking service
-     */
+    /** Member var for communicating with networking service */
     public MyResultReceiver mReceiver;
 
     // Required empty public constructor
     public WelcomeFragment() {
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = FragmentWelcomeBinding.inflate(inflater, container, false);
-        View rootView = binding.getRoot();
-
-        return rootView;
-
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initGame();
-    }
-
     /**
-     * When this fragment is attached to its host activity, ie {@link com.tiansirk.countryquiz.MainActivity} the listener interface is connected
+     * When this fragment is attached to its host activity, ie {@link MainActivity} the listener interface is connected
      * If not then an error exception is thrown to notify the developer.
-     *
      * @param context
      */
     @Override
@@ -109,21 +71,31 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
         }
     }
 
-    /**
-     * When this fragment is detached from the host, the listeners is set to null, to decouple.
-     */
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = FragmentWelcomeBinding.inflate(inflater, container, false);
+        View rootView = binding.getRoot();
+
+        //TODO: set newuser with data received from MainActivity
+        if(newUser) startNetworkService();
+        else initFireStore();
+        return rootView;
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (newUser) showEditDialog();
+    }
+
+    /** When this fragment is detached from the host, the listeners is set to null, to decouple. */
     @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
-    }
-
-    private void initGame() {
-        initFireStore();//TODO: Ez csak Basic init! Nézd az onStart-ot lehet, hogy ez ott megvalósul?
-        if (newUser) {
-            startNetworkService();
-            showEditDialog();
-        } else loadGame();
     }
 
 
@@ -188,7 +160,6 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
 
     /**
      * Receives the result from IntentService and acts accordingly if it's running, OK or Failed
-     *
      * @param resultCode is the code of the status of result
      * @param resultData is the data came with the result
      */
@@ -212,6 +183,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                 break;
         }
     }
+
 
     /**
      * This method will make the Welcome view visible and hide the error message

@@ -234,7 +234,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements
             } else {
                 binding.verifyEmailButton.setVisibility(View.VISIBLE);
             }
-            finish();
+
         } else {
             binding.status.setText(R.string.signed_out);
             binding.detail.setText(null);
@@ -242,7 +242,7 @@ public class EmailPasswordActivity extends AppCompatActivity implements
             binding.emailPasswordButtons.setVisibility(View.VISIBLE);
             binding.emailPasswordFields.setVisibility(View.VISIBLE);
             binding.signedInButtons.setVisibility(View.GONE);
-            finish();
+
         }
     }
 

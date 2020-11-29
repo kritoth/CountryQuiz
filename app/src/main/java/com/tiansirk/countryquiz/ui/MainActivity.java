@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setTitle(getString(R.string.app_title));//Sets the title in the action bar
-
         initTimber();
+
     }
 
     /* Setup Firestore EventListener here in order to spare bandwith usage while the app is not in foreground */
@@ -89,29 +89,25 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     }
 
     private void startAuthActivity(){
+        Timber.i(" startAuthActivity is called");
         Intent activityIntent = new Intent(this, EmailPasswordActivity.class);
         startActivityForResult(activityIntent, LAUNCH_SECOND_ACTIVITY);
     }
 
-    private void getUserFromDb(FirebaseUser user){
-        // Name, email address, and profile photo Url
-        String name = user.getDisplayName();
-        String email = user.getEmail();
-        // Check if user's email is verified
-        boolean emailVerified = user.isEmailVerified();
-        // The user's ID, unique to the Firebase project. Do NOT use this value to authenticate with your backend server,
-        // if you have one. Use FirebaseUser.getIdToken() instead.
-        String uid = user.getUid();
-        Timber.i("Retrieving User from DB");
-        mRepository.get(uid).addOnSuccessListener(new OnSuccessListener() {
-            @Override
-            public void onSuccess(Object o) {
-                mUser = (User) o;
-                Timber.i("User retireved: %s", mUser.toString());
-                initMainMenuFragment();
-            }
-        });
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
+            if(resultCode == Activity.RESULT_OK){
+                FirebaseUser user = data.getParcelableExtra("result");
+                saveUserToDb(user);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
     }
 
     private void saveUserToDb(FirebaseUser user){
@@ -131,6 +127,29 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         initMainMenuFragment();
     }
 
+
+    private void getUserFromDb(FirebaseUser user){
+        // Name, email address, and profile photo Url
+        String name = user.getDisplayName();
+        String email = user.getEmail();
+        // Check if user's email is verified
+        boolean emailVerified = user.isEmailVerified();
+        // The user's ID, unique to the Firebase project. Do NOT use this value to authenticate with your backend server,
+        // if you have one. Use FirebaseUser.getIdToken() instead.
+        String uid = user.getUid();
+        Timber.i("Retrieving User from DB: %s", uid);
+        mRepository.get(uid).addOnSuccessListener(new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                mUser = (User) o;
+                Timber.i("User retireved: %s", mUser.toString());
+                initMainMenuFragment();
+            }
+        });
+
+    }
+
+
     private void initWelcomeFragment(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -145,10 +164,10 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         mainMenuFragment = new MainMenuFragment();
-        ft.add(R.id.container_main_menu, mainMenuFragment, TAG_MAIN_MENU_FRAGMENT);
+        ft.replace(R.id.container_main_menu, mainMenuFragment, TAG_MAIN_MENU_FRAGMENT);
         ft.addToBackStack(TAG_MAIN_MENU_FRAGMENT);
         ft.commit();
-        showHideFragment(mainMenuFragment);
+
     }
 
     /** This method is defined in the WelcomeFragment to let retrieve data from it */
@@ -156,8 +175,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     public void onSetupFinished(User user) {
         Timber.d("User received from WelcomeFragment");
         mUser = user;
-        detachWelcomeFragment();
-        showHideFragment(mainMenuFragment);
+
+        initMainMenuFragment();
     }
 
     /** This method is defined in the MainMenuFragment to let retrieve data from it */
@@ -174,9 +193,10 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         ft.commit();
     }
 
-    /** Shows or hides the {@param fragment} according to its current state */
+    /** Shows or hides the {@param fragment} according to its current state. When it's hidden, it still runs,
+     * with its every view and feature and not added to backstack either. */
     private void showHideFragment(Fragment fragment){
-        Timber.i("Calling method with: %s", fragment.toString());
+        Timber.i("Calling method with: %s, it is hidden: %s", fragment.toString(), fragment.isHidden());
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         if(fragment.isHidden()) ft.show(fragment);
@@ -184,26 +204,13 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         ft.commit();
     }
 
+
     /** This method is defined in the Repository to let retrieve data from it */
     @Override
     public void onEvent(DocumentSnapshot documentSnapshot) {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
-            if(resultCode == Activity.RESULT_OK){
-                FirebaseUser user = data.getParcelableExtra("result");
-                saveUserToDb(user);
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
-        }
-    }
 
     /** Initiates the logging utility called Timber, see: https://github.com/JakeWharton/timber */
     private void initTimber(){

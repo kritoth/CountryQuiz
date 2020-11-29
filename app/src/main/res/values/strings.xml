@@ -11,7 +11,7 @@
     <string name="welcome_fragment_2">Loading data may take a few seconds. Please wait.</string>
     <!-- MainMenuFragment -->
     <string name="title_main_menu_fragment">Country Quiz</string>
-    <string name="high_score_main_menu_fragment">High Score:</string>
+    <string name="high_score_main_menu_fragment">High Score: %d</string>
     <string name="name_main_menu_fragment">Player 1</string>
     <string name="start_main_menu_fragment">Start Game</string>
     <string name="leaderboard_main_menu_fragment">Leader Board</string>

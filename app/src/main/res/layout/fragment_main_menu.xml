@@ -48,7 +48,7 @@
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/name_main_menu_fragment"
+            tools:text="@string/name_main_menu_fragment"
             app:layout_constraintBottom_toTopOf="@+id/tv_high_score"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -59,7 +59,7 @@
             android:id="@+id/tv_high_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/high_score_main_menu_fragment"
+            android:text="@string/high_score_main_menu_fragment"
 
             app:layout_constraintBottom_toTopOf="@+id/btn_new_game"
             app:layout_constraintEnd_toEndOf="parent"

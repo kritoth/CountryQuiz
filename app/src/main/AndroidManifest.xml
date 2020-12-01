@@ -12,7 +12,6 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup"
         android:fullBackupContent="false">
-        <activity android:name=".ui.EmailPasswordActivity"></activity>
         <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

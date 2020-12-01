@@ -1,5 +1,6 @@
 package com.tiansirk.countryquiz.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.tiansirk.countryquiz.R;
+import com.tiansirk.countryquiz.databinding.FragmentEditNameDialogBinding;
 
 import static com.tiansirk.countryquiz.ui.MainActivity.TAG_WELCOME_FRAGMENT;
 
@@ -27,23 +31,22 @@ import static com.tiansirk.countryquiz.ui.MainActivity.TAG_WELCOME_FRAGMENT;
  */
 public class EditNameDialogFragment extends DialogFragment implements TextView.OnEditorActionListener {
 
-    // The listener interface with a method passing back data result to host Activity
+    /* The listener interface with a method passing back data result to host fragment */
     public interface EditNameDialogListener {
-        void onFinishEditDialog(String inputText);
+        void onFinishEditDialog(Intent inputData);
     }
+    /* Member var for views */
+    FragmentEditNameDialogBinding binding;
+    /* Member var data*/
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
 
-    private EditText mEditText;
-
+    // Empty constructor is required for DialogFragment, use `newInstance` instead as shown below
     public EditNameDialogFragment() {
-        // Empty constructor is required for DialogFragment
-        // Make sure not to add arguments to the constructor
-        // Use `newInstance` instead as shown below
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
+     * Use this factory method to create a new instance of, this fragment using the provided parameters.
      * @param title Title of the fragment
      * @return A new instance of fragment EditNameDialogFragment.
      */
@@ -56,38 +59,40 @@ public class EditNameDialogFragment extends DialogFragment implements TextView.O
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_name_dialog, container, false);
+        binding = FragmentEditNameDialogBinding.inflate(inflater, container, false);
+        View rootView = binding.getRoot();
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        return rootView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Get field from view
-        mEditText = (EditText) view.findViewById(R.id.txt_your_name);
         // Fetch arguments from bundle and set title
         String title = getArguments().getString("title", "Enter Name");
         getDialog().setTitle(title);
         // Show soft keyboard automatically and request focus to field
-        mEditText.requestFocus();
+        binding.txtYourName.requestFocus();
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         // Setup a callback when the "Done" button is pressed on keyboard
-        mEditText.setOnEditorActionListener(this);
+        binding.txtYourName.setOnEditorActionListener(this);
     }
 
-    /** Fires whenever the textfield has an action performed
-     * In this case, when the "Done" button is pressed
-     * REQUIRES a 'soft keyboard' (virtual keyboard)
-     */
+    /** Fires whenever the textfield has an action performed. In this case, when the "Done" button is pressed
+     * REQUIRES a 'soft keyboard' (virtual keyboard) */
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (EditorInfo.IME_ACTION_DONE == actionId) {
             // Return input text back to activity through the implemented listener
             EditNameDialogListener listener = (EditNameDialogListener) getActivity().getSupportFragmentManager().findFragmentByTag(TAG_WELCOME_FRAGMENT);
-            listener.onFinishEditDialog(mEditText.getText().toString());
+            Intent inputData = new Intent();
+            inputData.putExtra("name", binding.txtYourName.getText().toString().trim());
+            inputData.putExtra("result", mUser);
+            listener.onFinishEditDialog(inputData);
             // Close the dialog and return back to the parent activity
             dismiss();
             return true;

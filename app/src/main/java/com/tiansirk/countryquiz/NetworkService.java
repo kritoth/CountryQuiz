@@ -32,9 +32,11 @@ import static com.tiansirk.countryquiz.ui.WelcomeFragment.EXTRA_KEY_RECEIVER;
 import static com.tiansirk.countryquiz.ui.WelcomeFragment.EXTRA_KEY_URL;
 
 /**
- * Own customized {@link IntentService}, for doing a one time job in the background thred. This job is
+ * Own customized {@link IntentService}, for doing a one time job in the background thread. This job is
  * to fetch data from a web API. This is to be done once in the lifetime of the App, only at the very
- * first time it's been installed and opened.
+ * first time it's been installed and opened. First downloads JSON from the API, then parses it to {@link com.tiansirk.countryquiz.model.CountryJson} POJO,
+ * then transforms them to {@link com.tiansirk.countryquiz.model.Country} POJO, then generates {@link com.tiansirk.countryquiz.model.Question}s from POJOs,
+ * then arrange the Questions into {@link Level}.
  */
 public class NetworkService extends IntentService {
 

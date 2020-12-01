@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         setContentView(binding.getRoot());
         setTitle(getString(R.string.app_title));//Sets the title in the action bar
         initTimber();
-
     }
 
     /* Setup Firestore EventListener here in order to spare bandwith usage while the app is not in foreground */
@@ -67,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     protected void onStart() {
         super.onStart();
         initFireStore();
-        checkUser();
     }
 
     private void initFireStore(){
@@ -75,79 +73,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         mRepository = new Repository(this, User.class, COLLECTION_NAME);
     }
 
-    private void checkUser(){
-        Timber.i("Checking user auth");
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            Timber.i("User exists, getting from DB");
-            getUserFromDb(user);
-        } else {
-            Timber.i("User NOT exists, starting authActivity");
-            startAuthActivity();
-
-        }
-    }
-
-    private void startAuthActivity(){
-        Timber.i(" startAuthActivity is called");
-        Intent activityIntent = new Intent(this, EmailPasswordActivity.class);
-        startActivityForResult(activityIntent, LAUNCH_SECOND_ACTIVITY);
-    }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == LAUNCH_SECOND_ACTIVITY) {
-            if(resultCode == Activity.RESULT_OK){
-                FirebaseUser user = data.getParcelableExtra("result");
-                saveUserToDb(user);
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
-        }
-    }
-
-    private void saveUserToDb(FirebaseUser user){
-        // Name, email address, and profile photo Url
-        String name = user.getDisplayName();
-        String email = user.getEmail();
-        // Check if user's email is verified
-        boolean emailVerified = user.isEmailVerified();
-        // The user's ID, unique to the Firebase project. Do NOT use this value to authenticate with your backend server,
-        // if you have one. Use FirebaseUser.getIdToken() instead.
-        String uid = user.getUid();
-
-        mUser = new User(uid, name);
-        Timber.i("Saving user to DB: " + mUser.toString());
-        mRepository.create(mUser);
-
-        initMainMenuFragment();
-    }
-
-
-    private void getUserFromDb(FirebaseUser user){
-        // Name, email address, and profile photo Url
-        String name = user.getDisplayName();
-        String email = user.getEmail();
-        // Check if user's email is verified
-        boolean emailVerified = user.isEmailVerified();
-        // The user's ID, unique to the Firebase project. Do NOT use this value to authenticate with your backend server,
-        // if you have one. Use FirebaseUser.getIdToken() instead.
-        String uid = user.getUid();
-        Timber.i("Retrieving User from DB: %s", uid);
-        mRepository.get(uid).addOnSuccessListener(new OnSuccessListener() {
-            @Override
-            public void onSuccess(Object o) {
-                mUser = (User) o;
-                Timber.i("User retireved: %s", mUser.toString());
-                initMainMenuFragment();
-            }
-        });
-
-    }
 
 
     private void initWelcomeFragment(){

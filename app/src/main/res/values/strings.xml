@@ -3,8 +3,12 @@
     <string name="app_title">Country Quiz</string>
     <!-- EditNameDialogFragment -->
     <string name="enter_your_name">Enter Your Name</string>
+    <string name="enter_your_email">Enter Your E-Mail</string>
+    <string name="enter_your_password">Enter Your Password</string>
     <string name="done">Done</string>
     <string name="your_name">Your Name</string>
+    <string name="your_email">YourEmail@address.com</string>
+    <string name="your_password">****</string>
     <string name="error_message">An error occurred. Try again later.</string>
     <!-- WelcomeFragment -->
     <string name="welcome_fragment">Welcome to Country Quiz!</string>

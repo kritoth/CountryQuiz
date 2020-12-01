@@ -4,6 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -19,5 +20,31 @@
         android:layout_height="wrap_content"
         android:hint="@string/your_name"
         android:inputType="textPersonName"
+        android:imeOptions="actionNext" />
+    <TextView
+        android:id="@+id/lbl_your_email"
+        android:text="@string/enter_your_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/txt_your_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/your_email"
+        android:inputType="textEmailAddress"
+        android:imeOptions="actionNext" />
+    <TextView
+        android:id="@+id/lbl_your_password"
+        android:text="@string/enter_your_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/txt_your_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/your_password"
+        android:inputType="textPassword"
         android:imeOptions="actionDone" />
 </LinearLayout>

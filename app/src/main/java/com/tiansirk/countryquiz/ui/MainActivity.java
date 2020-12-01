@@ -59,13 +59,14 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         setContentView(binding.getRoot());
         setTitle(getString(R.string.app_title));//Sets the title in the action bar
         initTimber();
+        initWelcomeFragment();
     }
 
     /* Setup Firestore EventListener here in order to spare bandwith usage while the app is not in foreground */
     @Override
     protected void onStart() {
         super.onStart();
-        initFireStore();
+        //initFireStore();
     }
 
     private void initFireStore(){
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
 
     private void initWelcomeFragment(){
+        Timber.i("Initializing WelcomeFragment");
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         welcomeFragment = new WelcomeFragment();
@@ -100,9 +102,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     /** This method is defined in the WelcomeFragment to let retrieve data from it */
     @Override
     public void onSetupFinished(User user) {
-        Timber.d("User received from WelcomeFragment");
+        Timber.d("User received from WelcomeFragment: %s", user.toString().substring(0,100));
         mUser = user;
-
         initMainMenuFragment();
     }
 

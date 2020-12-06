@@ -10,6 +10,7 @@ import timber.log.Timber;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +26,7 @@ import com.tiansirk.countryquiz.model.User;
 import com.tiansirk.countryquiz.utils.MyDebugTree;
 import com.tiansirk.countryquiz.utils.MyReleaseTree;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Repository.EntityChangeListener,
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     public static final String USER_PREFERENCES = MainActivity.class.getPackage().getName().concat("_userPrefs");
     public static final String KEY_SAVED_USER_NAME = "userName";
+    public static final String KEY_USER = "user";
+    public static final String KEY_LEVELS = "levels";
     public static final String TAG_WELCOME_FRAGMENT = "welcome_fragment";
     public static final String TAG_MAIN_MENU_FRAGMENT = "main_menu_fragment";
     private static final String COLLECTION_NAME = "users";
@@ -74,10 +78,6 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         mRepository = new Repository(this, User.class, COLLECTION_NAME);
     }
 
-
-
-
-
     private void initWelcomeFragment(){
         Timber.i("Initializing WelcomeFragment");
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -90,9 +90,13 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     private void initMainMenuFragment(){
         Timber.i("Initializing MainMenuFragment");
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(KEY_USER, mUser);
+        bundle.putParcelableArrayList(KEY_LEVELS, (ArrayList<? extends Parcelable>) mLevels);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         mainMenuFragment = new MainMenuFragment();
+        mainMenuFragment.setArguments(bundle);
         ft.replace(R.id.container_main_menu, mainMenuFragment, TAG_MAIN_MENU_FRAGMENT);
         ft.addToBackStack(TAG_MAIN_MENU_FRAGMENT);
         ft.commit();
@@ -105,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         Timber.d("User received from WelcomeFragment: %s", user.toString());
         mUser = user;
         mLevels = levels;
+        if(!welcomeFragment.isHidden()) showHideFragment(welcomeFragment);
         initMainMenuFragment();
     }
 

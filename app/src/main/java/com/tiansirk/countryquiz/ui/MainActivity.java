@@ -101,9 +101,10 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     /** This method is defined in the WelcomeFragment to let retrieve data from it */
     @Override
-    public void onSetupFinished(User user) {
-        Timber.d("User received from WelcomeFragment: %s", user.toString().substring(0,100));
+    public void onSetupFinished(User user, List<Level> levels) {
+        Timber.d("User received from WelcomeFragment: %s", user.toString());
         mUser = user;
+        mLevels = levels;
         initMainMenuFragment();
     }
 

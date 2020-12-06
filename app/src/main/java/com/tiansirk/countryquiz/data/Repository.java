@@ -1,7 +1,6 @@
 package com.tiansirk.countryquiz.data;
 
 import android.app.Activity;
-import android.content.Context;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -15,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.tiansirk.countryquiz.model.Identifiable;
+import com.tiansirk.countryquiz.model.Level;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +32,7 @@ public class Repository<TEntity extends Identifiable<String>> {
 
     private final CollectionReference collectionReference;
     private final String collectionName;
+    private final String LEVELS_SUBCOLLECTION_NAME = "levels";
 
     /**
      * Initializes the repository storing the data in the given collection.
@@ -82,6 +83,26 @@ public class Repository<TEntity extends Identifiable<String>> {
         });
     }
 
+    public Task<QuerySnapshot> getAllLevels(String id){
+        final String documentName = id;
+        DocumentReference documentReference = collectionReference.document(documentName);
+        Timber.i( "Getting levels of " + documentName + ".");
+
+        return documentReference.collection(LEVELS_SUBCOLLECTION_NAME).get().continueWith(new Continuation<QuerySnapshot, QuerySnapshot>() {
+            @Override
+            public QuerySnapshot then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot.isEmpty()) {
+                    Timber.d( "DocumentSnapshot does not exist.");
+                    return null;
+                } else {
+                    Timber.i("Returning documentSnapshot");
+                    return querySnapshot;
+                }
+            }
+        });
+    }
+
     public void listenToChanges(TEntity entity){
         final String documentId = entity.getEntityKey();
         collectionReference.addSnapshotListener(activity, new EventListener<QuerySnapshot>() {
@@ -110,6 +131,21 @@ public class Repository<TEntity extends Identifiable<String>> {
                 Timber.e(e, "There was an error creating '" + documentId + "' in '" + collectionName + "'!");
             }
         });
+    }
+
+
+    public Task<Void> saveLevel(String userId, TEntity entity) {
+        ((Level)entity).setUserId(userId);
+        DocumentReference userDocumentReference = collectionReference.document(userId);
+        DocumentReference levelDocumentReference = userDocumentReference.collection(LEVELS_SUBCOLLECTION_NAME).document();
+        final String levelDocId = levelDocumentReference.getId();
+        Timber.i( "Creating level '" + levelDocId + "' in '" + LEVELS_SUBCOLLECTION_NAME + "'.");
+        return levelDocumentReference.set(entity).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Timber.e(e, "There was an error creating " + levelDocId + " levels subcollection!");
+                }
+            });
     }
 
     /** UPDATE */

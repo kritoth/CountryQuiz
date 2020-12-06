@@ -10,24 +10,25 @@ import java.util.List;
 /**
  * Model class for Firestore document: Level
  */
-public class Level implements Parcelable {
+public class Level implements Parcelable, Identifiable {
 
     //The auto ID given by Firestore. It is needed to have during queries for identification, sorting, etc purposes
     private String documentId;
     private int level;
     private List<Question> questions;
     private int achievedPoints;
-    private boolean succeeded;
+    private boolean completed;
+    private String userId; //foreign-key
 
     /** Empty constructor is needed for Firestore to be able to recreate the Object from its Document */
     public Level() {
     }
 
-    public Level(int level, List<Question> questions, int achievedPoints, boolean succeeded) {
+    public Level(int level, List<Question> questions, int achievedPoints, boolean completed) {
         this.level = level;
         this.questions = questions;
         this.achievedPoints = achievedPoints;
-        this.succeeded = succeeded;
+        this.completed = completed;
     }
 
     //Need to be excluded from Firestore's autogenereting the Object
@@ -60,12 +61,20 @@ public class Level implements Parcelable {
         this.achievedPoints = achievedPoints;
     }
 
-    public boolean isSucceeded() {
-        return succeeded;
+    public boolean isCompleted() {
+        return completed;
     }
 
-    public void setSucceeded(boolean succeeded) {
-        this.succeeded = succeeded;
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -73,9 +82,10 @@ public class Level implements Parcelable {
         return "Level{" +
                 "documentId='" + documentId + '\'' +
                 ", level=" + level +
-                ", questions=" + questions.size() +
+                ", questions=" + questions +
                 ", achievedPoints=" + achievedPoints +
-                ", succeeded=" + succeeded +
+                ", completed=" + completed +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 
@@ -90,7 +100,7 @@ public class Level implements Parcelable {
         dest.writeInt(this.level);
         dest.writeTypedList(this.questions);
         dest.writeInt(this.achievedPoints);
-        dest.writeByte(this.succeeded ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.completed ? (byte) 1 : (byte) 0);
     }
 
     protected Level(Parcel in) {
@@ -98,7 +108,7 @@ public class Level implements Parcelable {
         this.level = in.readInt();
         this.questions = in.createTypedArrayList(Question.CREATOR);
         this.achievedPoints = in.readInt();
-        this.succeeded = in.readByte() != 0;
+        this.completed = in.readByte() != 0;
     }
 
     public static final Parcelable.Creator<Level> CREATOR = new Parcelable.Creator<Level>() {
@@ -112,4 +122,10 @@ public class Level implements Parcelable {
             return new Level[size];
         }
     };
+
+    @Exclude
+    @Override
+    public Object getEntityKey() {
+        return  documentId;
+    }
 }

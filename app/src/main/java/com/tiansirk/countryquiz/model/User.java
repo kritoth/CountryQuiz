@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.firestore.Exclude;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,6 @@ public class User implements Parcelable, Identifiable {
     private String username;
     private int totalPoints;
     private List<Integer> completedLevels;
-    private List<Level> levels;
 
     public static User newInstance() {
         return new User();
@@ -26,12 +27,11 @@ public class User implements Parcelable, Identifiable {
     public User() {
     }
 
-    public User(String documentId, String username, int totalPoints, List<Integer> completedLevels, List<Level> levels) {
+    public User(String documentId, String username, int totalPoints, List<Integer> completedLevels) {
         this.documentId = documentId;
         this.username = username;
         this.totalPoints = totalPoints;
         this.completedLevels = completedLevels;
-        this.levels = levels;
     }
 
     public User(String documentId, String username) {
@@ -39,7 +39,6 @@ public class User implements Parcelable, Identifiable {
         this.username = username;
         this.totalPoints = 0;
         this.completedLevels = new ArrayList<>();
-        this.levels = new ArrayList<>();
     }
 
     public String getDocumentId() {
@@ -74,14 +73,6 @@ public class User implements Parcelable, Identifiable {
         this.completedLevels = completedLevels;
     }
 
-    public List<Level> getLevels() {
-        return levels;
-    }
-
-    public void setLevels(List<Level> levels) {
-        this.levels = levels;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -89,7 +80,6 @@ public class User implements Parcelable, Identifiable {
                 ", username='" + username + '\'' +
                 ", totalPoints=" + totalPoints +
                 ", completedLevels=" + completedLevels +
-                ", levels=" + levels +
                 '}';
     }
 
@@ -104,7 +94,6 @@ public class User implements Parcelable, Identifiable {
         dest.writeString(this.username);
         dest.writeInt(this.totalPoints);
         dest.writeList(this.completedLevels);
-        dest.writeTypedList(this.levels);
     }
 
     protected User(Parcel in) {
@@ -113,7 +102,6 @@ public class User implements Parcelable, Identifiable {
         this.totalPoints = in.readInt();
         this.completedLevels = new ArrayList<Integer>();
         in.readList(this.completedLevels, Integer.class.getClassLoader());
-        this.levels = in.createTypedArrayList(Level.CREATOR);
     }
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
@@ -128,6 +116,7 @@ public class User implements Parcelable, Identifiable {
         }
     };
 
+    @Exclude
     @Override
     public Object getEntityKey() {
         return documentId;

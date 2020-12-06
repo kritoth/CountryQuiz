@@ -126,7 +126,7 @@ public class GenerateQuestionUtils {
                 else{
                     String currency = country.getCurrencies().get(0).getName();
                     if(currency.contains(" ")) {
-                        return currency.substring(currency.indexOf(" ") - 1);
+                        return currency.substring(currency.indexOf(" ") + 1);
                     }else {
                         return currency;
                     }

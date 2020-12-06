@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Model class for Firestore document: Question
  */
-public class Question implements Parcelable {
+public class Question implements Parcelable, Identifiable {
 
     //The auto ID given by Firestore. It is needed to have during queries for identification, sorting, etc purposes
     private String documentId;
@@ -138,4 +138,11 @@ public class Question implements Parcelable {
             return new Question[size];
         }
     };
+
+    //Need to be excluded from Firestore's autogenereting the Object
+    @Exclude
+    @Override
+    public Object getEntityKey() {
+        return documentId;
+    }
 }

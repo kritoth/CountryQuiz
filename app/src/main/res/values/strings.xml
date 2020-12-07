@@ -24,7 +24,8 @@
     <string name="question_topLevelDomain">What is the domain of %s used on the internet?</string>
     <string name="question_capital">What is the %s of %s?</string>
     <string name="question_region">In which %s can %s be found?</string>
-    <string name="question_population_and_area">What is the approximate %s in square km of %s?</string>
+    <string name="question_area">What is the approximate %s in square km of %s?</string>
+    <string name="question_population">What is the approximate %s of %s?</string>
     <string name="question_timezones">In which time zone can %s be found?</string>
     <string name="question_borders">Which country is a neighbor to %s?</string>
     <string name="question_currencies">Which is the currency of %s?</string>

@@ -56,11 +56,12 @@ public class GenerateQuestionUtils {
             }
         }
         Timber.d("No. of generated questions: #%s", questions.size());
+        Collections.shuffle(questions); // Ensures unique and random ordering
         return questions;
     }
 
-        /** Building the question for the country received with using the field received.
-         * If the field is not relevant, an empty string is returned.*/
+    /** Building the question for the country received with using the field received.
+     * If the field is not relevant, an empty string is returned.*/
     private static String buildQuestion(String countryName, Field countryField, Context context) {
         String subject = countryField.getName();
         switch(subject) {
@@ -75,8 +76,9 @@ public class GenerateQuestionUtils {
             case ("region"):
                 return String.format(context.getString(R.string.question_region), subject, countryName);
             case ("population"):
+                return String.format(context.getString(R.string.question_population), subject, countryName);
             case ("area"):
-                return String.format(context.getString(R.string.question_population_and_area), subject, countryName);
+                return String.format(context.getString(R.string.question_area), subject, countryName);
             case ("timezones"):
                 return String.format(context.getString(R.string.question_timezones), countryName);
             case ("borders"):

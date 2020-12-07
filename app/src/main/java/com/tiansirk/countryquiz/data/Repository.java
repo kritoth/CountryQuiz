@@ -77,7 +77,7 @@ public class Repository<TEntity extends Identifiable<String>> {
             public TEntity then(@NonNull Task<DocumentSnapshot> task) throws Exception {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 if (documentSnapshot.exists()) {
-                    Timber.i("returning documentSnapshot");
+                    Timber.i("returning user");
                     return documentSnapshot.toObject(entityClass);
                 } else {
                     Timber.d( "Document '" + documentName + "' does not exist in '" + collectionName + "'.");
@@ -97,10 +97,10 @@ public class Repository<TEntity extends Identifiable<String>> {
             public QuerySnapshot then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 QuerySnapshot querySnapshot = task.getResult();
                 if (querySnapshot.isEmpty()) {
-                    Timber.d( "DocumentSnapshot does not exist.");
+                    Timber.d( "Levels DocumentSnapshot does not exist.");
                     return null;
                 } else {
-                    Timber.i("Returning documentSnapshot");
+                    Timber.i("Returning levels documentSnapshot");
                     return querySnapshot;
                 }
             }

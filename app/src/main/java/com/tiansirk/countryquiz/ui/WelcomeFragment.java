@@ -334,14 +334,14 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
 
     /** Called when new user is created and saved to Firestore finished */
     private void setupNewUserSucceeded(){
-        Timber.i("Finished retrieving existing user's data. Start sending back setup results.");
+        Timber.i("Finished retrieving new user's data. Start sending back setup results.");
         hideProgressBar();
         listener.onSetupFinished(mUser, mLevels);
     }
 
     /** Called when data for existing user from Firestore downloading finished */
     private void setupExistingUserSucceeded(){
-        Timber.i("Finished setting up new user's data. Start sending back setup results.");
+        Timber.i("Finished setting up existing user's data. Start sending back setup results.");
         hideProgressBar();
         listener.onSetupFinished(mUser, mLevels);
     }

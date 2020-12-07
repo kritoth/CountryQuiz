@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.GameFragment">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/game_cl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/game_score"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="16dp"
+            tools:text="Score: 9999"
+            app:layout_constraintBottom_toTopOf="@+id/tv_game_question"
+            app:layout_constraintEnd_toStartOf="@id/game_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/game_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="16dp"
+            tools:text="00:25"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/game_score"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/tv_game_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            tools:text="To be or not to be?"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/ll_game"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/game_score"/>
+
+        <LinearLayout
+            android:id="@+id/ll_game"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="16dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_game_question">
+
+            <TextView
+                android:id="@+id/tv_game_answer_1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                tools:text="To be."
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/tv_game_answer_2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                tools:text="Not to be."
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/tv_game_answer_3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                tools:text="Esse."
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/tv_game_answer_4"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                tools:text="Non esse."
+                android:gravity="center"/>
+            <Button
+                android:id="@+id/btn_game_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="@string/game_submit"/>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+    android:id="@+id/pb_game_fragment"
+    android:layout_height="42dp"
+    android:layout_width="42dp"
+    android:layout_gravity="center"
+    android:visibility="invisible" />
+
+    <TextView
+    android:id="@+id/tv_error_message_game_fragment"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="16dp"
+    android:text="@string/error_message"
+    android:textSize="20sp"
+    android:visibility="invisible" />
+
+</FrameLayout>

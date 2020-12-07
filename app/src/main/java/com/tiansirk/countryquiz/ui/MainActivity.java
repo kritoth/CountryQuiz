@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Repository.EntityChangeListener,
-        WelcomeFragment.WelcomeFragmentListener, MainMenuFragment.MainMenuFragmentListener {
+        WelcomeFragment.WelcomeFragmentListener, MainMenuFragment.MainMenuFragmentListener, GameFragment.GameFragmentListener {
 
     public static final String USER_PREFERENCES = MainActivity.class.getPackage().getName().concat("_userPrefs");
     public static final String KEY_SAVED_USER_NAME = "userName";
@@ -33,9 +33,9 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     public static final String KEY_LEVELS = "levels";
     public static final String TAG_WELCOME_FRAGMENT = "welcome_fragment";
     public static final String TAG_MAIN_MENU_FRAGMENT = "main_menu_fragment";
+    public static final String TAG_GAME_FRAGMENT = "game_fragment";
     private static final String COLLECTION_NAME = "users";
     public static final int LAUNCH_SECOND_ACTIVITY = 1;
-
 
     private ActivityMainBinding binding;
 
@@ -47,9 +47,9 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     /** Member vars for fragments of this activity */
     private WelcomeFragment welcomeFragment;
     private MainMenuFragment mainMenuFragment;
+    private GameFragment gameFragment;
 
     private Repository mRepository;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +98,20 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     }
 
+    private void initGameFragment(){
+        Timber.i("Initializing GameFragment");
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(KEY_USER, mUser);
+        bundle.putParcelableArrayList(KEY_LEVELS, (ArrayList<? extends Parcelable>) mLevels);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        gameFragment = new GameFragment();
+        gameFragment.setArguments(bundle);
+        ft.replace(R.id.container_game, gameFragment, TAG_GAME_FRAGMENT);
+        ft.addToBackStack(TAG_GAME_FRAGMENT);
+        ft.commit();
+    }
+
     /** This method is defined in the WelcomeFragment to let retrieve data from it */
     @Override
     public void onSetupFinished(User user, List<Level> levels) {
@@ -111,7 +125,21 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     /** This method is defined in the MainMenuFragment to let retrieve data from it */
     @Override
     public void onStartGameClicked() {
+        //todo: start gameFragment with fields
+        if(!mainMenuFragment.isHidden()) showHideFragment(mainMenuFragment);
+        initGameFragment();
+    }
+    /** This method is defined in the MainMenuFragment to let retrieve data from it */
+    @Override
+    public void onLeaderboardClicked() {
+        //todo: start LeaderBoardActivity with fields
 
+    }
+
+    /** This method is defined in the GameFragment to let retrieve data from it */
+    @Override
+    public void onSubmitClicked() {
+        //todo: get the Question: points, answered and Level:
     }
 
     /** This ends the WelcomeFragment permanently */

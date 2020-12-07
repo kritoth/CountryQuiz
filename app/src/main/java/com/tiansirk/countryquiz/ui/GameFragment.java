@@ -35,7 +35,7 @@ public class GameFragment extends Fragment {
 
     /** The interface for communication */
     public interface GameFragmentListener {
-        void onStartGameClicked();
+        void onSubmitClicked();
     }
 
     /** Member vars for game */

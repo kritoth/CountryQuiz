@@ -28,18 +28,27 @@ import static com.tiansirk.countryquiz.ui.MainActivity.KEY_USER;
  * Use the {@link MainMenuFragmentListener} interface for communication. */
 public class MainMenuFragment extends Fragment {
 
-    /** Member vars for views */
+    /**
+     * Member vars for views
+     */
     private FragmentMainMenuBinding binding;
 
-    /** Member var for own custom communication listener */
+    /**
+     * Member var for own custom communication listener
+     */
     private MainMenuFragmentListener listener;
 
-    /** The interface for communication */
+    /**
+     * The interface for communication
+     */
     public interface MainMenuFragmentListener {
         void onStartGameClicked();
+        void onLeaderboardClicked();
     }
 
-    /** Member vars for game */
+    /**
+     * Member vars for game
+     */
     private User mUser;
     private ArrayList<Level> mLevels;
     private List<Question> mQuestions;
@@ -73,10 +82,13 @@ public class MainMenuFragment extends Fragment {
         setDataToViews();
         showHideButton();
         showDataView();
+        setupClickListeners();
     }
 
-    /** When this fragment is attached to its host activity, ie {@link MainActivity} the listener interface is connected
-     * If not then an error exception is thrown to notify the developer. */
+    /**
+     * When this fragment is attached to its host activity, ie {@link MainActivity} the listener interface is connected
+     * If not then an error exception is thrown to notify the developer.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -88,11 +100,34 @@ public class MainMenuFragment extends Fragment {
         }
     }
 
-    /** When this fragment is detached from the host, the listeners is set to null, to decouple. */
+    /**
+     * When this fragment is detached from the host, the listeners is set to null, to decouple.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    public void setupClickListeners(){
+        binding.btnContinueGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onStartGameClicked();
+            }
+        });
+        binding.btnNewGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onStartGameClicked();
+            }
+        });
+        binding.btnLeaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onLeaderboardClicked();
+            }
+        });
     }
 
     /** This method will set the data in member fields to the views */

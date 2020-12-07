@@ -25,8 +25,7 @@ import static com.tiansirk.countryquiz.ui.MainActivity.KEY_LEVELS;
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_USER;
 
 /** A simple {@link Fragment} subclass.
- * Use the {@link MainMenuFragment.MainMenuFragmentListener} interface for to communicate with this fragment.
- */
+ * Use the {@link MainMenuFragmentListener} interface for communication. */
 public class MainMenuFragment extends Fragment {
 
     /** Member vars for views */
@@ -72,6 +71,7 @@ public class MainMenuFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setDataToViews();
+        showHideButton();
         showDataView();
     }
 
@@ -102,6 +102,19 @@ public class MainMenuFragment extends Fragment {
         binding.tvHighScore.setText(String.format(getString(R.string.high_score_main_menu_fragment), mUser.getTotalPoints()));
     }
 
+    /** This method will show or hide the 'Start New Game' and 'Continue Game' buttons */
+    private void showHideButton() {
+        if(mUser.getCompletedLevels() == null) {
+            binding.btnNewGame.setVisibility(View.VISIBLE);
+            binding.btnContinueGame.setVisibility(View.GONE);
+        }else if (mUser.getCompletedLevels().isEmpty() || mUser.getCompletedLevels().size() == 0) {
+            binding.btnNewGame.setVisibility(View.VISIBLE);
+            binding.btnContinueGame.setVisibility(View.GONE);
+        }else{
+            binding.btnNewGame.setVisibility(View.GONE);
+            binding.btnContinueGame.setVisibility(View.VISIBLE);
+        }
+    }
     /** This method will show the progressbar */
     private void showProgressBar() {
         binding.pbMainMenuFragment.setVisibility(View.VISIBLE);

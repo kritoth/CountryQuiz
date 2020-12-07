@@ -16,11 +16,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/start_main_menu_fragment"
-            app:layout_constraintBottom_toTopOf="@+id/btn_leaderboard"
+            app:layout_constraintBottom_toTopOf="@+id/btn_continue_game"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_high_score" />
+
+        <Button
+            android:id="@+id/btn_continue_game"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/continue_main_menu_fragment"
+            app:layout_constraintBottom_toTopOf="@+id/btn_leaderboard"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_new_game" />
 
         <Button
             android:id="@+id/btn_leaderboard"
@@ -29,9 +40,8 @@
             android:text="@string/leaderboard_main_menu_fragment"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_new_game" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_continue_game" />
 
         <TextView
             android:id="@+id/tv_title"
@@ -40,7 +50,6 @@
             android:text="@string/title_main_menu_fragment"
             app:layout_constraintBottom_toTopOf="@+id/tv_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,7 +60,7 @@
             tools:text="@string/name_main_menu_fragment"
             app:layout_constraintBottom_toTopOf="@+id/tv_high_score"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
@@ -62,7 +71,7 @@
             tools:text="@string/level_main_menu_fragment"
             app:layout_constraintBottom_toTopOf="@+id/tv_high_score"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
@@ -73,7 +82,6 @@
             tools:text="@string/high_score_main_menu_fragment"
             app:layout_constraintBottom_toTopOf="@+id/btn_new_game"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_level" />
     </androidx.constraintlayout.widget.ConstraintLayout>

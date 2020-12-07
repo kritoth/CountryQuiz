@@ -18,7 +18,7 @@
     <string name="high_score_main_menu_fragment">High score: %d</string>
     <string name="level_main_menu_fragment">Level %d</string>
     <string name="name_main_menu_fragment">Player 1</string>
-    <string name="start_main_menu_fragment">Start Game</string>
+    <string name="start_main_menu_fragment">Start New Game</string>
     <string name="continue_main_menu_fragment">Continue Game</string>
     <string name="leaderboard_main_menu_fragment">Leader Board</string>
     <string name="question_topLevelDomain">What is the domain of %s used on the internet?</string>

@@ -137,11 +137,15 @@ public class Repository<TEntity extends Identifiable<String>> {
         });
     }
 
-    public Task<Void> saveLevels(String userId, List<? extends TEntity> entities) {
+    public Task<Void> saveLevels(String parentDocumentId, List<? extends TEntity> entities) {
         WriteBatch batch = db.batch();
-        DocumentReference userDocumentReference = collectionReference.document(userId);
-        DocumentReference levelDocumentReference = userDocumentReference.collection(LEVELS_SUBCOLLECTION_NAME).document();
+        DocumentReference userDocumentReference = collectionReference.document(parentDocumentId);
+
         for(TEntity tEntity : entities){
+            if(Level.class.isInstance(tEntity)){
+                ((Level)tEntity).setUserId(parentDocumentId);
+            }
+            DocumentReference levelDocumentReference = userDocumentReference.collection(LEVELS_SUBCOLLECTION_NAME).document();
             batch.set(levelDocumentReference, tEntity);
         }
         return batch.commit().addOnFailureListener(activity, new OnFailureListener() {

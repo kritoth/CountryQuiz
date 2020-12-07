@@ -48,11 +48,8 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     public static final String EXTRA_KEY_URL = "com.tiansirk.countryquiz.extra_key_url";
     public static final String EXTRA_KEY_RECEIVER = "com.tiansirk.countryquiz.extra_key_receiver";
     private static final String COLLECTION_NAME = "users";
-    private static boolean FLAG_FIREBASE_SAVE_FINISHED = false;
-    private static boolean FLAG_SERVICE_FINISHED = false;
-    private static boolean FLAG_FIREBASE_AUTH_FINISHED = false;
-    private static boolean FLAG_LEVELS_DOWNLOAD_FINISHED = false;
-    private static boolean FLAG_LEVELS_PARSING_FINISHED = false;
+    private static boolean FLAG_FIRESTORE_USER_SAVE_FINISHED = false;
+    private static boolean FLAG_SERVICE_PARSING_LEVELS_FINISHED = false;
 
     /** Member var for views */
     private FragmentWelcomeBinding binding;
@@ -117,13 +114,20 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     private void checkUser(){
         Timber.i("Start checking user auth");
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) { //signed-in already
-            Timber.i("User exists, getting from DB");
-            getUserFromDb(currentUser);
-        } else { //not signed-in
+        if(currentUser == null){ //not signed-in
             Timber.i("User NOT exists, starting authActivity");
             showEditDialog();
             startNetworkService();
+        } else {
+            currentUser.reload();
+            if (currentUser != null) { //signed-in already
+                Timber.i("User exists, getting from DB");
+                getUserFromDb(currentUser);
+            } else { //not signed-in
+                Timber.i("User NOT exists, starting authActivity");
+                showEditDialog();
+                startNetworkService();
+            }
         }
     }
 
@@ -139,15 +143,15 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
         // The user's ID, unique to the Firebase project. Do NOT use this value to authenticate with your backend server, if you have one. Use FirebaseUser.getIdToken() instead.
         final String uid = user.getUid();
         Timber.i("Retrieving User from DB: %s", uid);
-        mRepository.get(uid).addOnSuccessListener(getActivity(), new OnSuccessListener() {
-            @Override
-            public void onSuccess(Object o) {
-                mUser = (User) o;
-                Timber.i("User retireved: %s", mUser.toString());
-                FLAG_FIREBASE_AUTH_FINISHED = true;
-                getLevelsFromDb();
-            }
-        })
+        mRepository
+                .get(uid).addOnSuccessListener(getActivity(), new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        mUser = (User) o;
+                        Timber.i("User retireved: %s", mUser.toString());
+                        getLevelsFromDb();
+                    }
+                })
                 .addOnFailureListener(getActivity(), new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -155,7 +159,6 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                         Timber.e(e, "Failed to load user from Firestore.");
                         Toast.makeText(getActivity(), "Loading user data failed.",
                                 Toast.LENGTH_SHORT).show();
-                        FLAG_FIREBASE_AUTH_FINISHED = true;
                     }
                 });
     }
@@ -175,8 +178,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                     mLevels.add(level);
                 }
                 Timber.i("Levels retrieved.");
-                FLAG_LEVELS_DOWNLOAD_FINISHED = true;
-                setupSucceeded();
+                setupExistingUserSucceeded();
             }
         })
                 .addOnFailureListener(getActivity(), new OnFailureListener() {
@@ -186,7 +188,6 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                         Timber.e(e, "Failed to load levels from Firestore.");
                         Toast.makeText(getActivity(), "Loading levels data failed.",
                                 Toast.LENGTH_SHORT).show();
-                        FLAG_LEVELS_DOWNLOAD_FINISHED = true;
                     }
                 });
     }
@@ -213,7 +214,6 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
             email = data.getStringExtra("email");
             password = data.getStringExtra("password");
         }
-
         createAccount(name, email, password);
     }
 
@@ -229,7 +229,6 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                             Timber.d("createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             createUser(name, user, null);
-
                         } else {
                             // If sign in fails, display a message to the user.
                             Timber.e(task.getException(), "createUserWithEmail:failure");
@@ -243,15 +242,12 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     /** Creates a {@link User} and stores it into member var in order to have it saving into database */
     private void createUser(String name, FirebaseUser user, List<Level> levels){
             boolean emailVerified = user.isEmailVerified(); // Check if user's email is verified
-            // The user's ID, unique to the Firebase project. Do NOT use this value to authenticate with your backend server,
-            // if you have one. Use FirebaseUser.getIdToken() instead.
+            // The user's ID, unique to the Firebase project. Do NOT use this value to authenticate with your backend server, if you have one. Use FirebaseUser.getIdToken() instead.
             String uid = user.getUid();
             if (mUser == null) {
                 mUser = new User(uid, name);
-                FLAG_FIREBASE_AUTH_FINISHED = true;
             } else {
                 mUser.setDocumentId(uid);
-                FLAG_FIREBASE_AUTH_FINISHED = true;
                 mUser.setUsername(name);
             }
             saveUserToDb();
@@ -265,8 +261,8 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
                     Timber.i("user saved to Firestore");
-                    FLAG_FIREBASE_SAVE_FINISHED = true;
-                    if(FLAG_SERVICE_FINISHED) saveLevelsToDb();
+                    FLAG_FIRESTORE_USER_SAVE_FINISHED = true;
+                    if(FLAG_SERVICE_PARSING_LEVELS_FINISHED) saveLevelsToDb();
                 } else {
                     // If saving fails, display a message to the user.
                     Timber.e(task.getException(), "Failed to save into Firestore");
@@ -280,22 +276,20 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     private void saveLevelsToDb(){
         if(mLevels != null) {
             Timber.i("Saving levels under user in DB: %s", mLevels.size());
-            for(Level level : mLevels) {
-                mRepository.saveLevel(mUser.getDocumentId(), level).addOnCompleteListener(getActivity(), new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
+            mRepository.saveLevels(mUser.getDocumentId(), mLevels).addOnCompleteListener(getActivity(), new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
                             Timber.i("Level saved to Firestore");
-                        } else {
+                            setupNewUserSucceeded();
+                    } else {
                             // If saving fails, display a message to the user.
                             Timber.e(task.getException(), "Failed to save Level into Firestore");
                             Toast.makeText(getActivity(), "Setup failed.",
                                     Toast.LENGTH_SHORT).show();
-                        }
                     }
-                });
-            }
-            setupSucceeded();
+                }
+            });
         }
     }
 
@@ -326,7 +320,8 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                 result = resultData.getParcelableArrayList("results");
                 Timber.d("Question generating resulted");
                 mLevels = result;
-                FLAG_SERVICE_FINISHED = true;
+                FLAG_SERVICE_PARSING_LEVELS_FINISHED = true;
+                if(FLAG_FIRESTORE_USER_SAVE_FINISHED) saveLevelsToDb();
                 binding.pbWelcomeFragment.setVisibility(View.INVISIBLE);
                 break;
             case STATUS_FAILED:
@@ -337,9 +332,16 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
         }
     }
 
-    /** Called when BOTH onReceiveResult and saveUserToDb/getUserFromDb finished */
-    private void setupSucceeded(){
-        Timber.i("Finished retrieving data. Start sending back setup results. FlagService: %s. FlagAuth: %s. FlagSave: %s", FLAG_SERVICE_FINISHED, FLAG_FIREBASE_AUTH_FINISHED, FLAG_FIREBASE_SAVE_FINISHED);
+    /** Called when new user is created and saved to Firestore finished */
+    private void setupNewUserSucceeded(){
+        Timber.i("Finished retrieving existing user's data. Start sending back setup results.");
+        hideProgressBar();
+        listener.onSetupFinished(mUser, mLevels);
+    }
+
+    /** Called when data for existing user from Firestore downloading finished */
+    private void setupExistingUserSucceeded(){
+        Timber.i("Finished setting up new user's data. Start sending back setup results.");
         hideProgressBar();
         listener.onSetupFinished(mUser, mLevels);
     }
@@ -411,7 +413,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
                     Timber.i("User updated in Firestore");
-                    if(FLAG_FIREBASE_SAVE_FINISHED) setupSucceeded();
+                   setupExistingUserSucceeded();
                 } else {
                     // If saving fails, display a message to the user.
                     Timber.e(task.getException(), "Failed to update Firestore");

@@ -13,8 +13,11 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.tiansirk.countryquiz.model.Identifiable;
 import com.tiansirk.countryquiz.model.Level;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +33,7 @@ public class Repository<TEntity extends Identifiable<String>> {
     private Activity activity;
     private final Class<TEntity> entityClass;
 
+    private final FirebaseFirestore db;
     private final CollectionReference collectionReference;
     private final String collectionName;
     private final String LEVELS_SUBCOLLECTION_NAME = "levels";
@@ -44,8 +48,8 @@ public class Repository<TEntity extends Identifiable<String>> {
         this.entityClass = entityClass;
 
         Timber.d("Initializing FireStore");
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        this.collectionReference = db.collection(this.collectionName);
+        this.db = FirebaseFirestore.getInstance();
+        this.collectionReference = this.db.collection(this.collectionName);
         Timber.d("FireStore initialized");
     }
 
@@ -125,7 +129,7 @@ public class Repository<TEntity extends Identifiable<String>> {
         final String documentId = entity.getEntityKey();
         DocumentReference documentReference = collectionReference.document(documentId);
         Timber.i( "Creating '" + documentId + "' in '" + collectionName + "'.");
-        return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
+        return documentReference.set(entity).addOnFailureListener(activity, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Timber.e(e, "There was an error creating '" + documentId + "' in '" + collectionName + "'!");
@@ -133,6 +137,20 @@ public class Repository<TEntity extends Identifiable<String>> {
         });
     }
 
+    public Task<Void> saveLevels(String userId, List<? extends TEntity> entities) {
+        WriteBatch batch = db.batch();
+        DocumentReference userDocumentReference = collectionReference.document(userId);
+        DocumentReference levelDocumentReference = userDocumentReference.collection(LEVELS_SUBCOLLECTION_NAME).document();
+        for(TEntity tEntity : entities){
+            batch.set(levelDocumentReference, tEntity);
+        }
+        return batch.commit().addOnFailureListener(activity, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Timber.e(e, "There was an error creating levels subcollection!");
+            }
+        });
+    }
 
     public Task<Void> saveLevel(String userId, TEntity entity) {
         ((Level)entity).setUserId(userId);
@@ -140,7 +158,7 @@ public class Repository<TEntity extends Identifiable<String>> {
         DocumentReference levelDocumentReference = userDocumentReference.collection(LEVELS_SUBCOLLECTION_NAME).document();
         final String levelDocId = levelDocumentReference.getId();
         Timber.i( "Creating level '" + levelDocId + "' in '" + LEVELS_SUBCOLLECTION_NAME + "'.");
-        return levelDocumentReference.set(entity).addOnFailureListener(new OnFailureListener() {
+        return levelDocumentReference.set(entity).addOnFailureListener(activity, new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Timber.e(e, "There was an error creating " + levelDocId + " levels subcollection!");
@@ -154,7 +172,7 @@ public class Repository<TEntity extends Identifiable<String>> {
         DocumentReference documentReference = collectionReference.document(documentId);
         Timber.i( "Updating '" + documentId + "' in '" + collectionName + "'.");
 
-        return documentReference.set(entity).addOnFailureListener(new OnFailureListener() {
+        return documentReference.set(entity).addOnFailureListener(activity, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Timber.e(e, "There was an error updating '" + documentId + "' in '" + collectionName + "'.");
@@ -167,7 +185,7 @@ public class Repository<TEntity extends Identifiable<String>> {
         DocumentReference documentReference = collectionReference.document(documentId);
         Timber.i( "Deleting '" + documentId + "' in '" + collectionName + "'.");
 
-        return documentReference.delete().addOnFailureListener(new OnFailureListener() {
+        return documentReference.delete().addOnFailureListener(activity, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Timber.e(e, "There was an error deleting '" + documentId + "' in '" + collectionName + "'.");

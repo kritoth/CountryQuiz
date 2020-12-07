@@ -15,7 +15,8 @@
     <string name="welcome_fragment_2">Loading data may take a few seconds. Please wait.</string>
     <!-- MainMenuFragment -->
     <string name="title_main_menu_fragment">Country Quiz</string>
-    <string name="high_score_main_menu_fragment">High Score: %d</string>
+    <string name="high_score_main_menu_fragment">High score: %d</string>
+    <string name="level_main_menu_fragment">Level %d</string>
     <string name="name_main_menu_fragment">Player 1</string>
     <string name="start_main_menu_fragment">Start Game</string>
     <string name="continue_main_menu_fragment">Continue Game</string>
@@ -48,5 +49,6 @@
     <string name="auth_failed">Authentication failed</string>
     <string name="firebase_status_fmt">Firebase UID: %s</string>
     <string name="emailpassword_status_fmt">Email User: %1$s (verified: %2$b)</string>
+
 
 </resources>

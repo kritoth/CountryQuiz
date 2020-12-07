@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tiansirk.countryquiz.R;
 import com.tiansirk.countryquiz.databinding.FragmentMainMenuBinding;
 import com.tiansirk.countryquiz.model.Level;
 import com.tiansirk.countryquiz.model.Question;
@@ -97,7 +98,8 @@ public class MainMenuFragment extends Fragment {
     /** This method will set the data in member fields to the views */
     private void setDataToViews(){
         binding.tvName.setText(mUser.getUsername());
-        binding.tvHighScore.setText(mUser.getTotalPoints());
+        binding.tvLevel.setText(String.format(getString(R.string.level_main_menu_fragment), mUser.getCompletedLevels().size()));
+        binding.tvHighScore.setText(String.format(getString(R.string.high_score_main_menu_fragment), mUser.getTotalPoints()));
     }
 
     /** This method will show the progressbar */

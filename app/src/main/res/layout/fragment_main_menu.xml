@@ -56,16 +56,26 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
         <TextView
-            android:id="@+id/tv_high_score"
+            android:id="@+id/tv_level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="@string/high_score_main_menu_fragment"
-
-            app:layout_constraintBottom_toTopOf="@+id/btn_new_game"
+            tools:text="@string/level_main_menu_fragment"
+            app:layout_constraintBottom_toTopOf="@+id/tv_high_score"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+
+        <TextView
+            android:id="@+id/tv_high_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="@string/high_score_main_menu_fragment"
+            app:layout_constraintBottom_toTopOf="@+id/btn_new_game"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_level" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <ProgressBar
         android:id="@+id/pb_main_menu_fragment"

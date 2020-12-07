@@ -142,10 +142,11 @@ public class Repository<TEntity extends Identifiable<String>> {
         DocumentReference userDocumentReference = collectionReference.document(parentDocumentId);
 
         for(TEntity tEntity : entities){
+            DocumentReference levelDocumentReference = userDocumentReference.collection(LEVELS_SUBCOLLECTION_NAME).document();
             if(Level.class.isInstance(tEntity)){
                 ((Level)tEntity).setUserId(parentDocumentId);
+                ((Level)tEntity).setDocumentId(levelDocumentReference.getId());
             }
-            DocumentReference levelDocumentReference = userDocumentReference.collection(LEVELS_SUBCOLLECTION_NAME).document();
             batch.set(levelDocumentReference, tEntity);
         }
         return batch.commit().addOnFailureListener(activity, new OnFailureListener() {

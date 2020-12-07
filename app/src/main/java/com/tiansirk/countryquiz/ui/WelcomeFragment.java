@@ -314,7 +314,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
         String error;
         switch (resultCode) {
             case STATUS_RUNNING:
-                binding.pbWelcomeFragment.setVisibility(View.VISIBLE);
+                showProgressBar();
                 break;
             case STATUS_SUCCESSFUL:
                 result = resultData.getParcelableArrayList("results");
@@ -322,7 +322,6 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                 mLevels = result;
                 FLAG_SERVICE_PARSING_LEVELS_FINISHED = true;
                 if(FLAG_FIRESTORE_USER_SAVE_FINISHED) saveLevelsToDb();
-                binding.pbWelcomeFragment.setVisibility(View.INVISIBLE);
                 break;
             case STATUS_FAILED:
                 error = resultData.getString("failed");
@@ -334,14 +333,14 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
 
     /** Called when new user is created and saved to Firestore finished */
     private void setupNewUserSucceeded(){
-        Timber.i("Finished retrieving new user's data. Start sending back setup results.");
+        Timber.i("Finished retrieving new user's data. Start sending back setup results. mLevels: #%s. Level 10: %s.", mLevels.size(), mLevels.get(9).toString());
         hideProgressBar();
         listener.onSetupFinished(mUser, mLevels);
     }
 
     /** Called when data for existing user from Firestore downloading finished */
     private void setupExistingUserSucceeded(){
-        Timber.i("Finished setting up existing user's data. Start sending back setup results.");
+        Timber.i("Finished setting up existing user's data. Start sending back setup results. mLevels: #%s. Level 10: %s.", mLevels.size(), mLevels.get(9).toString());
         hideProgressBar();
         listener.onSetupFinished(mUser, mLevels);
     }

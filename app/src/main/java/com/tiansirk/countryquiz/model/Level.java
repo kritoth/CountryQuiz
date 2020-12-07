@@ -37,6 +37,10 @@ public class Level implements Parcelable, Identifiable {
         return documentId;
     }
 
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
+
     public int getLevel() {
         return level;
     }

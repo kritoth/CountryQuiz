@@ -320,6 +320,9 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                 result = resultData.getParcelableArrayList("results");
                 Timber.d("Question generating resulted");
                 mLevels = result;
+//                for(Level level : mLevels){
+//                    Timber.d("Order in mLevels when is received: %s", level.getLevel());
+//                }
                 FLAG_SERVICE_PARSING_LEVELS_FINISHED = true;
                 if(FLAG_FIRESTORE_USER_SAVE_FINISHED) saveLevelsToDb();
                 break;

@@ -29,11 +29,9 @@ public class GenerateQuestionUtils {
                         .subList(i* NUMBER_OF_QUESTIONS_IN_A_LEVEL,i*NUMBER_OF_QUESTIONS_IN_A_LEVEL+NUMBER_OF_QUESTIONS_IN_A_LEVEL),
                         0, false));
             }
-//        Timber.d("Num of levels: " +levels.size()
-//                + "\nFirst level num of questions: " +levels.get(0).getQuestions().size()
-//                + "\nLast level num of questions: " +levels.get(levels.size()-1).getQuestions().size()
-//                + "\nFirst question: " +levels.get(0).getQuestions().get(0)
-//                + "\nAlmost last question: " +levels.get(levels.size()-1).getQuestions().get(0));
+//            for(Level level : levels){
+//                Timber.d("Order in levels when is about to be sent: %s", level.getLevel());
+//            }
         return levels;
     }
 

@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     public static final String KEY_SAVED_USER_NAME = "userName";
     public static final String KEY_USER = "user";
     public static final String KEY_LEVELS = "levels";
+    public static final String KEY_CURRENT_LEVEL = "current_level";
+    public static final String KEY_NEXT_LEVEL = "next_level";
     public static final String TAG_WELCOME_FRAGMENT = "welcome_fragment";
     public static final String TAG_MAIN_MENU_FRAGMENT = "main_menu_fragment";
     public static final String TAG_GAME_FRAGMENT = "game_fragment";
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     /** Member vars for the game */
     private User mUser;
     private List<Level> mLevels;
+    private List<Level> mLevelsCompleted;
+    private List<Level> mLevelsUncompleted;
     private List<Question> mQuestions;
 
     /** Member vars for fragments of this activity */
@@ -87,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         Timber.i("Initializing MainMenuFragment");
         Bundle bundle = new Bundle();
         bundle.putParcelable(KEY_USER, mUser);
-        bundle.putParcelableArrayList(KEY_LEVELS, (ArrayList<? extends Parcelable>) mLevels);
+        bundle.putParcelable(KEY_CURRENT_LEVEL, currentLevel());
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         mainMenuFragment = new MainMenuFragment();
@@ -102,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         Timber.i("Initializing GameFragment");
         Bundle bundle = new Bundle();
         bundle.putParcelable(KEY_USER, mUser);
-        bundle.putParcelableArrayList(KEY_LEVELS, (ArrayList<? extends Parcelable>) mLevels);
+        bundle.putParcelable(KEY_NEXT_LEVEL, nextLevel());
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         gameFragment = new GameFragment();
@@ -114,10 +119,11 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     /** This method is defined in the WelcomeFragment to let retrieve data from it */
     @Override
-    public void onSetupFinished(User user, List<Level> levels) {
+    public void onSetupFinished(User user, List<Level>... levels) {
         Timber.d("User received from WelcomeFragment: %s", user.toString());
         mUser = user;
-        mLevels = levels;
+        mLevelsCompleted = levels[0];
+        mLevelsUncompleted = levels[1];
         if(!welcomeFragment.isHidden()) showHideFragment(welcomeFragment);
         initMainMenuFragment();
     }
@@ -125,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
     /** This method is defined in the MainMenuFragment to let retrieve data from it */
     @Override
     public void onStartGameClicked() {
-        //todo: start gameFragment with fields
         if(!mainMenuFragment.isHidden()) showHideFragment(mainMenuFragment);
         initGameFragment();
     }
@@ -142,12 +147,14 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         //todo: get the Question: points, answered and Level:
     }
 
-    /** This ends the WelcomeFragment permanently */
-    private void detachWelcomeFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.detach(welcomeFragment);
-        ft.commit();
+    /** This gets the last level from the completed Levels */
+    private Level currentLevel(){
+        return mLevelsCompleted.get(mLevelsCompleted.size()-1);
+    }
+
+    /** This gets the first level from the not completed Levels */
+    private Level nextLevel(){
+        return mLevelsUncompleted.get(0);
     }
 
     /** Shows or hides the {@param fragment} according to its current state. When it's hidden, it still runs,
@@ -168,6 +175,13 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     }
 
+    /** This ends the WelcomeFragment permanently */
+    private void detachWelcomeFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.detach(welcomeFragment);
+        ft.commit();
+    }
 
     /** Initiates the logging utility called Timber, see: https://github.com/JakeWharton/timber */
     private void initTimber(){

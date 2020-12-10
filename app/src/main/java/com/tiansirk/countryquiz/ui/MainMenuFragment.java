@@ -21,6 +21,7 @@ import com.tiansirk.countryquiz.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.tiansirk.countryquiz.ui.MainActivity.KEY_CURRENT_LEVEL;
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_LEVELS;
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_USER;
 
@@ -50,7 +51,7 @@ public class MainMenuFragment extends Fragment {
      * Member vars for game
      */
     private User mUser;
-    private ArrayList<Level> mLevels;
+    private Level mLevel;
     private List<Question> mQuestions;
 
     // Required empty public constructor
@@ -71,8 +72,8 @@ public class MainMenuFragment extends Fragment {
         Timber.i("Receiving User and ArrayList<Level> from MainActivity");
         Bundle bundle = getArguments();
         mUser = bundle.getParcelable(KEY_USER);
-        mLevels = bundle.getParcelableArrayList(KEY_LEVELS);
-        Timber.i("User: %s. Levels: %s", mUser.toString(), mLevels.size());
+        mLevel = bundle.getParcelable(KEY_CURRENT_LEVEL);
+        Timber.i("User: %s. Levels: %s", mUser.toString(), mLevel.toString());
         return rootView;
     }
 
@@ -133,7 +134,7 @@ public class MainMenuFragment extends Fragment {
     /** This method will set the data in member fields to the views */
     private void setDataToViews(){
         binding.tvName.setText(mUser.getUsername());
-        binding.tvLevel.setText(String.format(getString(R.string.level_main_menu_fragment), mUser.getCompletedLevels().size()));
+        binding.tvLevel.setText(String.format(getString(R.string.level_main_menu_fragment), mLevel.getLevel()));
         binding.tvHighScore.setText(String.format(getString(R.string.high_score_main_menu_fragment), mUser.getTotalPoints()));
     }
 

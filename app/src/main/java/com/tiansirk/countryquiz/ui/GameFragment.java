@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_LEVELS;
+import static com.tiansirk.countryquiz.ui.MainActivity.KEY_NEXT_LEVEL;
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_USER;
 
 /** A simple {@link Fragment} subclass.
@@ -40,7 +41,7 @@ public class GameFragment extends Fragment {
 
     /** Member vars for game */
     private User mUser;
-    private ArrayList<Level> mLevels;
+    private Level mLevel;
     private List<Question> mQuestions;
 
     // Required empty public constructor
@@ -62,8 +63,9 @@ public class GameFragment extends Fragment {
         Timber.i("Receiving User and ArrayList<Level> from MainMenuActivity");
         Bundle bundle = getArguments();
         mUser = bundle.getParcelable(KEY_USER);
-        mLevels = bundle.getParcelableArrayList(KEY_LEVELS);
-        Timber.i("User: %s. Levels: %s", mUser.toString(), mLevels.size());
+        mLevel = bundle.getParcelable(KEY_NEXT_LEVEL);
+
+        Timber.i("User: %s. Level: %s", mUser.toString(), mLevel.toString());
         return rootView;
     }
 
@@ -93,7 +95,6 @@ public class GameFragment extends Fragment {
         super.onDetach();
         listener = null;
     }
-
 
 
     /** This method will show the progressbar */

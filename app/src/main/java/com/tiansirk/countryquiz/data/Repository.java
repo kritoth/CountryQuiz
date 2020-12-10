@@ -25,6 +25,8 @@ import timber.log.Timber;
 
 public class Repository<TEntity extends Identifiable<String>> {
 
+    public static final String FIELD_NAME_COMPLETED = "completed";
+
     public interface EntityChangeListener{
         void onEvent(DocumentSnapshot documentSnapshot);
     }
@@ -87,12 +89,12 @@ public class Repository<TEntity extends Identifiable<String>> {
         });
     }
 
-    public Task<QuerySnapshot> getAllLevels(String id){
+    public Task<QuerySnapshot> getAllLevels(String id, String orderingField){
         final String documentName = id;
         DocumentReference documentReference = collectionReference.document(documentName);
         Timber.i( "Getting levels of " + documentName + ".");
 
-        return documentReference.collection(LEVELS_SUBCOLLECTION_NAME).get().continueWith(new Continuation<QuerySnapshot, QuerySnapshot>() {
+        return documentReference.collection(LEVELS_SUBCOLLECTION_NAME).orderBy(orderingField).get().continueWith(new Continuation<QuerySnapshot, QuerySnapshot>() {
             @Override
             public QuerySnapshot then(@NonNull Task<QuerySnapshot> task) throws Exception {
                 QuerySnapshot querySnapshot = task.getResult();
@@ -105,6 +107,52 @@ public class Repository<TEntity extends Identifiable<String>> {
                 }
             }
         });
+    }
+
+    public Task<QuerySnapshot> getCompletedLevels(String id, String orderingField){
+        final String documentName = id;
+        DocumentReference documentReference = collectionReference.document(documentName);
+        Timber.i( "Getting levels of " + documentName + ".");
+
+        return documentReference.collection(LEVELS_SUBCOLLECTION_NAME)
+                .whereEqualTo(FIELD_NAME_COMPLETED, true)
+                .orderBy(orderingField).get()
+                .continueWith(new Continuation<QuerySnapshot, QuerySnapshot>() {
+            @Override
+            public QuerySnapshot then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot.isEmpty()) {
+                    Timber.d( "Levels DocumentSnapshot does not exist.");
+                    return null;
+                } else {
+                    Timber.i("Returning levels documentSnapshot");
+                    return querySnapshot;
+                }
+            }
+        });
+    }
+
+    public Task<QuerySnapshot> getUncompletedLevels(String id, String orderingField){
+        final String documentName = id;
+        DocumentReference documentReference = collectionReference.document(documentName);
+        Timber.i( "Getting levels of " + documentName + ".");
+
+        return documentReference.collection(LEVELS_SUBCOLLECTION_NAME)
+                .whereEqualTo(FIELD_NAME_COMPLETED, false)
+                .orderBy(orderingField).get()
+                .continueWith(new Continuation<QuerySnapshot, QuerySnapshot>() {
+                    @Override
+                    public QuerySnapshot then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (querySnapshot.isEmpty()) {
+                            Timber.d( "Levels DocumentSnapshot does not exist.");
+                            return null;
+                        } else {
+                            Timber.i("Returning levels documentSnapshot");
+                            return querySnapshot;
+                        }
+                    }
+                });
     }
 
     public void listenToChanges(TEntity entity){

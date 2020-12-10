@@ -48,6 +48,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     public static final String EXTRA_KEY_URL = "com.tiansirk.countryquiz.extra_key_url";
     public static final String EXTRA_KEY_RECEIVER = "com.tiansirk.countryquiz.extra_key_receiver";
     private static final String COLLECTION_NAME = "users";
+    public static final String FIELD_NAME_LEVEL = "level";
     private static boolean FLAG_FIRESTORE_USER_SAVE_FINISHED = false;
     private static boolean FLAG_SERVICE_PARSING_LEVELS_FINISHED = false;
 
@@ -57,7 +58,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     private WelcomeFragmentListener listener;
     /** The interface for communication */
     public interface WelcomeFragmentListener {
-        void onSetupFinished(User user, List<Level> levels);
+        void onSetupFinished(User user, List<Level>... levels);
     }
     /** Member var for Auth */
     private FirebaseAuth mAuth;
@@ -66,6 +67,8 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
     /** Member var for data */
     private User mUser;
     private List<Level> mLevels;
+    private List<Level> mLevelsCompleted;
+    private List<Level> mLevelsUncompleted;
     /** Member var for communicating with networking service */
     public MyResultReceiver mReceiver;
 
@@ -149,7 +152,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                     public void onSuccess(Object o) {
                         mUser = (User) o;
                         Timber.i("User retireved: %s", mUser.toString());
-                        getLevelsFromDb();
+                        getCompletedLevelsFromDb();
                     }
                 })
                 .addOnFailureListener(getActivity(), new OnFailureListener() {
@@ -165,20 +168,48 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
 
     /** Loads the current state of the game from Firestore. It uses compound queries to get the data
      * from the User's 'levels' collection  */
-    private void getLevelsFromDb(){
+    private void getCompletedLevelsFromDb(){
         showProgressBar();
         Timber.i("Retrieving all Levels from DB for: %s", mUser.getDocumentId());
-        mRepository.getAllLevels(mUser.getDocumentId()).addOnSuccessListener(getActivity(), new OnSuccessListener() {
+        mRepository.getCompletedLevels(mUser.getDocumentId(), FIELD_NAME_LEVEL).addOnSuccessListener(getActivity(), new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
-                mLevels = new ArrayList<>();
+                mLevelsCompleted = new ArrayList<>();
                 QuerySnapshot querySnapshot = (QuerySnapshot) o;
                 for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
                     Level level = documentSnapshot.toObject(Level.class);
-                    mLevels.add(level);
+                    mLevelsCompleted.add(level);
+                    getUncompletedLevelsFromDb();
                 }
                 Timber.i("Levels retrieved.");
-                setupExistingUserSucceeded();
+
+            }
+        })
+                .addOnFailureListener(getActivity(), new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // If load fails, display a message to the user.
+                        Timber.e(e, "Failed to load levels from Firestore.");
+                        Toast.makeText(getActivity(), "Loading levels data failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
+
+    /** Loads the current state of the game from Firestore. It uses compound queries to get the data
+     * from the User's 'levels' collection  */
+    private void getUncompletedLevelsFromDb(){
+        mRepository.getUncompletedLevels(mUser.getDocumentId(), FIELD_NAME_LEVEL).addOnSuccessListener(getActivity(), new OnSuccessListener() {
+            @Override
+            public void onSuccess(Object o) {
+                mLevelsUncompleted = new ArrayList<>();
+                QuerySnapshot querySnapshot = (QuerySnapshot) o;
+                for(QueryDocumentSnapshot documentSnapshot : querySnapshot){
+                    Level level = documentSnapshot.toObject(Level.class);
+                    mLevelsUncompleted.add(level);
+                    setupExistingUserSucceeded();
+                }
             }
         })
                 .addOnFailureListener(getActivity(), new OnFailureListener() {
@@ -281,7 +312,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
                             Timber.i("Level saved to Firestore");
-                            setupNewUserSucceeded();
+                            getCompletedLevelsFromDb();
                     } else {
                             // If saving fails, display a message to the user.
                             Timber.e(task.getException(), "Failed to save Level into Firestore");
@@ -336,16 +367,16 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
 
     /** Called when new user is created and saved to Firestore finished */
     private void setupNewUserSucceeded(){
-        Timber.i("Finished retrieving new user's data. Start sending back setup results. mLevels: #%s. Level 10: %s.", mLevels.size(), mLevels.get(9).toString());
+        Timber.i("Finished retrieving new user's data. Start sending back setup results. Completed Levels size: #%s. Uncompleted Levels size: %s.", mLevelsCompleted.size(), mLevelsUncompleted.size());
         hideProgressBar();
-        listener.onSetupFinished(mUser, mLevels);
+        listener.onSetupFinished(mUser, mLevelsCompleted, mLevelsUncompleted);
     }
 
     /** Called when data for existing user from Firestore downloading finished */
     private void setupExistingUserSucceeded(){
-        Timber.i("Finished setting up existing user's data. Start sending back setup results. mLevels: #%s. Level 10: %s.", mLevels.size(), mLevels.get(9).toString());
+        Timber.i("Finished retrieving new user's data. Start sending back setup results. Completed Levels size: #%s. Uncompleted Levels size: %s.", mLevelsCompleted.size(), mLevelsUncompleted.size());
         hideProgressBar();
-        listener.onSetupFinished(mUser, mLevels);
+        listener.onSetupFinished(mUser, mLevelsCompleted, mLevelsUncompleted);
     }
 
     /** When this fragment is detached from the host, the listeners is set to null, to decouple. */

@@ -17,7 +17,7 @@ public class User implements Parcelable, Identifiable {
     private String documentId;  // equals to FirebaseAuth's uId
     private String username;
     private int totalPoints;
-    private List<Integer> completedLevels;
+    private List<String> completedLevels; // foreign key
 
     public static User newInstance() {
         return new User();
@@ -27,7 +27,7 @@ public class User implements Parcelable, Identifiable {
     public User() {
     }
 
-    public User(String documentId, String username, int totalPoints, List<Integer> completedLevels) {
+    public User(String documentId, String username, int totalPoints, List<String> completedLevels) {
         this.documentId = documentId;
         this.username = username;
         this.totalPoints = totalPoints;
@@ -38,7 +38,7 @@ public class User implements Parcelable, Identifiable {
         this.documentId = documentId;
         this.username = username;
         this.totalPoints = 0;
-        this.completedLevels = new ArrayList<>();
+        this.completedLevels = new ArrayList<String>();
     }
 
     public String getDocumentId() {
@@ -65,11 +65,11 @@ public class User implements Parcelable, Identifiable {
         this.totalPoints = totalPoints;
     }
 
-    public List<Integer> getCompletedLevels() {
+    public List<String> getCompletedLevels() {
         return completedLevels;
     }
 
-    public void setCompletedLevels(List<Integer> completedLevels) {
+    public void setCompletedLevels(List<String> completedLevels) {
         this.completedLevels = completedLevels;
     }
 
@@ -100,7 +100,7 @@ public class User implements Parcelable, Identifiable {
         this.documentId = in.readString();
         this.username = in.readString();
         this.totalPoints = in.readInt();
-        this.completedLevels = new ArrayList<Integer>();
+        this.completedLevels = new ArrayList<String>();
         in.readList(this.completedLevels, Integer.class.getClassLoader());
     }
 

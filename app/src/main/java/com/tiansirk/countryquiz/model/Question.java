@@ -20,6 +20,7 @@ public class Question implements Parcelable, Identifiable {
     private List<String> wrongAnswers;
     private int earnedPoint;
     private boolean answered;
+    private String levelId; // foreign key
 
     /** Empty constructor is needed for Firestore to be able to recreate the Object from its Document */
     public Question() {
@@ -88,6 +89,14 @@ public class Question implements Parcelable, Identifiable {
         this.answered = answered;
     }
 
+    public String getLevelId() {
+        return levelId;
+    }
+
+    public void setLevelId(String levelId) {
+        this.levelId = levelId;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -98,6 +107,7 @@ public class Question implements Parcelable, Identifiable {
                 ", wrongAnswers=" + wrongAnswers +
                 ", earnedPoint=" + earnedPoint +
                 ", answered=" + answered +
+                ", levelId='" + levelId + '\'' +
                 '}';
     }
 
@@ -115,6 +125,7 @@ public class Question implements Parcelable, Identifiable {
         dest.writeStringList(this.wrongAnswers);
         dest.writeInt(this.earnedPoint);
         dest.writeByte(this.answered ? (byte) 1 : (byte) 0);
+        dest.writeString(this.levelId);
     }
 
     protected Question(Parcel in) {
@@ -125,6 +136,7 @@ public class Question implements Parcelable, Identifiable {
         this.wrongAnswers = in.createStringArrayList();
         this.earnedPoint = in.readInt();
         this.answered = in.readByte() != 0;
+        this.levelId = in.readString();
     }
 
     public static final Parcelable.Creator<Question> CREATOR = new Parcelable.Creator<Question>() {

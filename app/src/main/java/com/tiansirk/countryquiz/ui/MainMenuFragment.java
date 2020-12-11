@@ -133,6 +133,7 @@ public class MainMenuFragment extends Fragment {
 
     /** This method will set the data in member fields to the views */
     private void setDataToViews(){
+        showProgressBar();
         binding.tvName.setText(mUser.getUsername());
         binding.tvLevel.setText(String.format(getString(R.string.level_main_menu_fragment), mLevel.getLevel()));
         binding.tvHighScore.setText(String.format(getString(R.string.high_score_main_menu_fragment), mUser.getTotalPoints()));
@@ -151,6 +152,25 @@ public class MainMenuFragment extends Fragment {
             binding.btnContinueGame.setVisibility(View.VISIBLE);
         }
     }
+
+    /** This method will make the Welcome view visible and hide the error message */
+    private void showDataView() {
+        // First, make sure the error is invisible
+        binding.tvErrorMessageMainMenuFragment.setVisibility(View.INVISIBLE);
+        // Then hide loading indicator
+        hideProgressBar();
+        // Then, make sure the data is visible
+        binding.clMainMenu.setVisibility(View.VISIBLE);
+    }
+    /** This method will make the error message visible and hide the Welcome view */
+    private void showErrorMessage() {
+        // First, hide the currently visible data
+        binding.clMainMenu.setVisibility(View.INVISIBLE);
+        // Then hide loading indicator
+        hideProgressBar();
+        // Then, show the error
+        binding.tvErrorMessageMainMenuFragment.setVisibility(View.VISIBLE);
+    }
     /** This method will show the progressbar */
     private void showProgressBar() {
         binding.pbMainMenuFragment.setVisibility(View.VISIBLE);
@@ -158,27 +178,5 @@ public class MainMenuFragment extends Fragment {
     /** This method will hide the progressbar */
     private void hideProgressBar() {
         binding.pbMainMenuFragment.setVisibility(View.INVISIBLE);
-    }
-    /** This method will make the Welcome view visible and hide the error message */
-    private void showDataView() {
-        // First, make sure the error is invisible
-        binding.tvErrorMessageMainMenuFragment.setVisibility(View.INVISIBLE);
-        // Then hide loading indicator
-        binding.pbMainMenuFragment.setVisibility(View.INVISIBLE);
-        // Then, make sure the data is visible
-        binding.tvTitle.setVisibility(View.VISIBLE);
-        binding.tvName.setVisibility(View.VISIBLE);
-        binding.tvHighScore.setVisibility(View.VISIBLE);
-    }
-    /** This method will make the error message visible and hide the Welcome view */
-    private void showErrorMessage() {
-        // First, hide the currently visible data
-        binding.tvTitle.setVisibility(View.INVISIBLE);
-        binding.tvName.setVisibility(View.INVISIBLE);
-        binding.tvHighScore.setVisibility(View.INVISIBLE);
-        // Then hide loading indicator
-        binding.pbMainMenuFragment.setVisibility(View.INVISIBLE);
-        // Then, show the error
-        binding.tvErrorMessageMainMenuFragment.setVisibility(View.VISIBLE);
     }
 }

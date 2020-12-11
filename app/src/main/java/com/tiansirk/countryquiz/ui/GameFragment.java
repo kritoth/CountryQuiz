@@ -127,18 +127,25 @@ public class GameFragment extends Fragment {
         // First, make sure the error is invisible
         binding.tvErrorMessageGameFragment.setVisibility(View.INVISIBLE);
         // Then hide loading indicator
-        binding.pbGameFragment.setVisibility(View.INVISIBLE);
+        hideProgressBar();
         // Then, make sure the data is visible
-
+        binding.gameCl.setVisibility(View.INVISIBLE);
     }
     /** This method will make the error message visible and hide the Game view */
     private void showErrorMessage() {
         // First, hide the currently visible data
-
-
+        binding.gameCl.setVisibility(View.INVISIBLE);
         // Then hide loading indicator
-        binding.pbGameFragment.setVisibility(View.INVISIBLE);
+        hideProgressBar();
         // Then, show the error
         binding.tvErrorMessageGameFragment.setVisibility(View.VISIBLE);
+    }
+    /** This method will show the progressbar */
+    private void showProgressBar() {
+        binding.pbGameFragment.setVisibility(View.VISIBLE);
+    }
+    /** This method will hide the progressbar */
+    private void hideProgressBar() {
+        binding.pbGameFragment.setVisibility(View.INVISIBLE);
     }
 }

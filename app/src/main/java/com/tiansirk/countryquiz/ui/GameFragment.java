@@ -11,6 +11,7 @@ import timber.log.Timber;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.tiansirk.countryquiz.databinding.FragmentGameBinding;
 import com.tiansirk.countryquiz.model.Level;
@@ -18,9 +19,9 @@ import com.tiansirk.countryquiz.model.Question;
 import com.tiansirk.countryquiz.model.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static com.tiansirk.countryquiz.ui.MainActivity.KEY_LEVELS;
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_NEXT_LEVEL;
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_USER;
 
@@ -43,6 +44,7 @@ public class GameFragment extends Fragment {
     private User mUser;
     private Level mLevel;
     private List<Question> mQuestions;
+    private int questionNumber;
 
     // Required empty public constructor
     public GameFragment() {
@@ -52,6 +54,7 @@ public class GameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        questionNumber = 0;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class GameFragment extends Fragment {
         Bundle bundle = getArguments();
         mUser = bundle.getParcelable(KEY_USER);
         mLevel = bundle.getParcelable(KEY_NEXT_LEVEL);
-
+        mQuestions = mLevel.getQuestions();
         Timber.i("User: %s. Level: %s", mUser.toString(), mLevel.toString());
         return rootView;
     }
@@ -73,7 +76,8 @@ public class GameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        setDataToViews();
+        showDataView();
     }
 
     /** When this fragment is attached to its host activity, ie {@link MainActivity} the listener interface is connected
@@ -97,14 +101,27 @@ public class GameFragment extends Fragment {
     }
 
 
-    /** This method will show the progressbar */
-    private void showProgressBar() {
-        binding.pbGameFragment.setVisibility(View.VISIBLE);
+    /** This method will set the data in member fields to the views */
+    private void setDataToViews(){
+        showProgressBar();
+        Question currQuestion = mQuestions.get(questionNumber);
+        binding.tvGameQuestion.setText(currQuestion.getQuestion());
+        randomBinding(currQuestion);
     }
-    /** This method will hide the progressbar */
-    private void hideProgressBar() {
-        binding.pbGameFragment.setVisibility(View.INVISIBLE);
+
+    private void randomBinding(Question question){
+        List<TextView> answerTextViews = new ArrayList<>();
+        answerTextViews.add(binding.tvGameAnswer1);
+        answerTextViews.add(binding.tvGameAnswer2);
+        answerTextViews.add(binding.tvGameAnswer3);
+        answerTextViews.add(binding.tvGameAnswer4);
+        Collections.shuffle(answerTextViews);
+        answerTextViews.get(0).setText(question.getRightAnswer());
+        for(int i=0;i<question.getWrongAnswers().size();i++) {
+            answerTextViews.get(i+1).setText(question.getWrongAnswers().get(i));
+        }
     }
+
     /** This method will make the Game view visible and hide the error message */
     private void showDataView() {
         // First, make sure the error is invisible

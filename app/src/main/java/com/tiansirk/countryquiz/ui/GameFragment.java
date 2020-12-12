@@ -12,7 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.tiansirk.countryquiz.R;
 import com.tiansirk.countryquiz.databinding.FragmentGameBinding;
 import com.tiansirk.countryquiz.model.Level;
 import com.tiansirk.countryquiz.model.Question;
@@ -45,16 +47,21 @@ public class GameFragment extends Fragment {
     private Level mLevel;
     private List<Question> mQuestions;
     private int questionNumber;
+    private int levelPoints;
+    private boolean answerSelected;
+    private String selectedAnswer;
 
     // Required empty public constructor
     public GameFragment() {
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         questionNumber = 0;
+        answerSelected = false;
+        selectedAnswer = "";
+        levelPoints = mLevel.getAchievedPoints();
     }
 
     @Override
@@ -71,7 +78,6 @@ public class GameFragment extends Fragment {
         Timber.i("User: %s. Level: %s", mUser.toString(), mLevel.toString());
         return rootView;
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -100,6 +106,90 @@ public class GameFragment extends Fragment {
         listener = null;
     }
 
+    /** Listens the Submit button. On click evaluates if answer is marked, evaluates the marked answer */
+    public void setupClickListeners(){
+        binding.tvGameAnswer1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(answerSelected) deMarkAnswer(view);
+                else markAnswer(view);
+            }
+        });
+        binding.tvGameAnswer2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(answerSelected) deMarkAnswer(view);
+                else markAnswer(view);
+            }
+        });
+        binding.tvGameAnswer3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(answerSelected) deMarkAnswer(view);
+                else markAnswer(view);
+            }
+        });
+        binding.tvGameAnswer4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(answerSelected) deMarkAnswer(view);
+                else markAnswer(view);
+            }
+        });
+        binding.btnGameSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!answerSelected) {
+                    Toast.makeText(getContext(), "Select an answer first!", Toast.LENGTH_SHORT);
+                    return;
+                }
+                evaluateAnswer();
+                if(mLevel.isCompleted()) newLevel();
+                else newQuestion();
+            }
+        });
+    }
+
+    /** Marks the {@param view} with different color, textcolor and sets its selected status */
+    private void markAnswer(View view) {
+        answerSelected = true;
+        selectedAnswer = ((TextView) view).getText().toString();
+        view.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        ((TextView) view).setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+    }
+
+    /** De-marks the {@param view} by restoring its color, textcolor and re-sets its selected status */
+    private void deMarkAnswer(View view) {
+        answerSelected = false;
+        selectedAnswer = ((TextView) view).getText().toString();
+        view.setBackgroundColor(//todo: as it was);
+        ((TextView) view).setTextColor(getResources().getColor(//todo: as it was));
+    }
+
+    private void evaluateAnswer(){
+        Question question = mQuestions.get(questionNumber);
+        question.setAnswered(true);
+        if(isCorrectAnswer(question)) levelPoints += 1;
+        mLevel.setAchievedPoints(levelPoints);
+        if(questionNumber == mQuestions.size() - 1) mLevel.setCompleted(true);
+        return;
+    }
+
+    private boolean isCorrectAnswer(Question question){
+        if (selectedAnswer.equals(question.getRightAnswer())) return  true;
+        else return false;
+    }
+
+    private void  newLevel(){
+        //todo: restart whole GameFragment for new level
+    }
+
+    private void newQuestion(){
+        questionNumber++;
+        answerSelected = false;
+        selectedAnswer = "";
+        //todo: get the next Question from list and reset the views
+    }
 
     /** This method will set the data in member fields to the views */
     private void setDataToViews(){
@@ -109,6 +199,7 @@ public class GameFragment extends Fragment {
         randomBinding(currQuestion);
     }
 
+    /** Shuffles the TextViews in a Collection in order to let them randomly bind with data. */
     private void randomBinding(Question question){
         List<TextView> answerTextViews = new ArrayList<>();
         answerTextViews.add(binding.tvGameAnswer1);

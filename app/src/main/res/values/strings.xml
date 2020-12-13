@@ -52,6 +52,10 @@
     <string name="emailpassword_status_fmt">Email User: %1$s (verified: %2$b)</string>
     <!-- GameFragment -->
     <string name="game_submit">Submit</string>
+    <!-- FeedbackDialogFragment -->
+    <string name="answer_right">Right answer</string>
+    <string name="answer_wrong">Wrong answer</string>
+    <string name="done">Done</string>
 
 
 </resources>

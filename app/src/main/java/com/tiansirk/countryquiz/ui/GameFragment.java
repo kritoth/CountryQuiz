@@ -1,13 +1,17 @@
 package com.tiansirk.countryquiz.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import timber.log.Timber;
 
 import android.view.LayoutInflater;
@@ -31,7 +35,9 @@ import static com.tiansirk.countryquiz.ui.MainActivity.KEY_USER;
 
 /** A simple {@link Fragment} subclass.
  * Use the {@link GameFragmentListener} interface for communication. */
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment implements FeedbackDialogFragment.FeedbackDialogListener {
+
+    public static final String KEY_IS_CORRECT = "is_correct";
 
     /** Member vars for views */
     private FragmentGameBinding binding;
@@ -43,6 +49,9 @@ public class GameFragment extends Fragment {
     public interface GameFragmentListener {
         void onSubmitClicked();
     }
+
+    /** Member for FeedbackDialogFragment */
+    private DialogFragment mFeedbackDialogFragment;
 
     /** Member vars for game */
     private User mUser;
@@ -155,8 +164,6 @@ public class GameFragment extends Fragment {
                     return;
                 }
                 evaluateAnswer();
-                if(mLevel.isCompleted()) newLevel();
-                else newQuestion();
             }
         });
     }
@@ -180,15 +187,32 @@ public class GameFragment extends Fragment {
     private void evaluateAnswer(){
         Question question = mQuestions.get(questionNumber);
         question.setAnswered(true);
-        if(isCorrectAnswer(question)) levelPoints += 1;
+        boolean correct = isCorrectAnswer(question);
+        if(correct) levelPoints += 1;
         mLevel.setAchievedPoints(levelPoints);
         if(questionNumber == mQuestions.size() - 1) mLevel.setCompleted(true);
-        return;
+        openFeedbackDialog(correct);
     }
 
     private boolean isCorrectAnswer(Question question){
         if (selectedAnswer.equals(question.getRightAnswer())) return  true;
         else return false;
+    }
+
+    private void openFeedbackDialog(boolean correct){
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(KEY_IS_CORRECT, correct);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        mFeedbackDialogFragment = new FeedbackDialogFragment();
+        mFeedbackDialogFragment.setArguments(bundle);
+        ft.show(mFeedbackDialogFragment);
+    }
+
+    @Override
+    public void onFinishFeedbackDialog(){
+        if(mLevel.isCompleted()) newLevel();
+        else newQuestion();
     }
 
     private void  newLevel(){

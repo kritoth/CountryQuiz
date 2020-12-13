@@ -46,5 +46,26 @@
         <item name="android:textSize">36sp</item>
     </style>
 
-    <color name="brown_500">#795548</color>
+    <!-- Answer TextViews Normal -->
+    <style name="AnswerText" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="background">@color/colorPrimaryDark</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+    </style>
+    <!-- Answer TextViews Accent -->
+    <style name="AnswerTextSelected" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">#000000</item>
+        <item name="background">@color/colorPrimaryLight</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+    </style>
 </resources>

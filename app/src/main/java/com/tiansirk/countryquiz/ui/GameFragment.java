@@ -1,10 +1,12 @@
 package com.tiansirk.countryquiz.ui;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import timber.log.Timber;
 
@@ -84,6 +86,7 @@ public class GameFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setDataToViews();
         showDataView();
+        setupClickListeners();
     }
 
     /** When this fragment is attached to its host activity, ie {@link MainActivity} the listener interface is connected
@@ -111,29 +114,37 @@ public class GameFragment extends Fragment {
         binding.tvGameAnswer1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(answerSelected) deMarkAnswer(view);
-                else markAnswer(view);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if(answerSelected) deMarkAnswer(view);
+                    else markAnswer(view);
+                }
             }
         });
         binding.tvGameAnswer2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(answerSelected) deMarkAnswer(view);
-                else markAnswer(view);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if(answerSelected) deMarkAnswer(view);
+                    else markAnswer(view);
+                }
             }
         });
         binding.tvGameAnswer3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(answerSelected) deMarkAnswer(view);
-                else markAnswer(view);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if(answerSelected) deMarkAnswer(view);
+                    else markAnswer(view);
+                }
             }
         });
         binding.tvGameAnswer4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(answerSelected) deMarkAnswer(view);
-                else markAnswer(view);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if(answerSelected) deMarkAnswer(view);
+                    else markAnswer(view);
+                }
             }
         });
         binding.btnGameSubmit.setOnClickListener(new View.OnClickListener() {
@@ -151,19 +162,19 @@ public class GameFragment extends Fragment {
     }
 
     /** Marks the {@param view} with different color, textcolor and sets its selected status */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void markAnswer(View view) {
         answerSelected = true;
         selectedAnswer = ((TextView) view).getText().toString();
-        view.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-        ((TextView) view).setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        ((TextView) view).setTextAppearance(R.style.AnswerTextSelected);
     }
 
     /** De-marks the {@param view} by restoring its color, textcolor and re-sets its selected status */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void deMarkAnswer(View view) {
         answerSelected = false;
         selectedAnswer = ((TextView) view).getText().toString();
-        view.setBackgroundColor(//todo: as it was);
-        ((TextView) view).setTextColor(getResources().getColor(//todo: as it was));
+        ((TextView) view).setTextAppearance(R.style.AnswerText);
     }
 
     private void evaluateAnswer(){

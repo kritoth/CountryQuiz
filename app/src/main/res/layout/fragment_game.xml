@@ -42,8 +42,8 @@
             android:layout_marginTop="40dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            style="@style/AnswerText"
             tools:text="To be or not to be?"
-            android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/ll_game"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,37 +66,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 tools:text="To be."
-                android:gravity="center"/>
+                style="@style/AnswerText"/>
             <TextView
                 android:id="@+id/tv_game_answer_2"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 tools:text="Not to be."
-                android:gravity="center"/>
+                style="@style/AnswerText"/>
             <TextView
                 android:id="@+id/tv_game_answer_3"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 tools:text="Esse."
-                android:gravity="center"/>
+                style="@style/AnswerText"/>
             <TextView
                 android:id="@+id/tv_game_answer_4"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 tools:text="Non esse."
-                android:gravity="center"/>
+                style="@style/AnswerText"/>
             <Button
                 android:id="@+id/btn_game_submit"
                 android:layout_width="wrap_content"

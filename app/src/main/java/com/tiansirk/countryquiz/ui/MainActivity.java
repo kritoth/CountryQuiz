@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         if(!mainMenuFragment.isHidden()) showHideFragment(mainMenuFragment);
         initGameFragment();
     }
+
     /** This method is defined in the MainMenuFragment to let retrieve data from it */
     @Override
     public void onLeaderboardClicked() {
@@ -143,8 +144,19 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     /** This method is defined in the GameFragment to let retrieve data from it */
     @Override
-    public void onSubmitClicked() {
-        //todo: get the Question: points, answered and Level:
+    public void onLevelFinished(Level finishedLevel) {
+
+        // get the finished Level's data: points, answered and number
+        mUser.setTotalPoints(mUser.getTotalPoints()+finishedLevel.getAchievedPoints());
+        List<String> finishedLevels = mUser.getCompletedLevels();
+        finishedLevels.add(finishedLevel.getDocumentId());
+        mUser.setCompletedLevels(finishedLevels);
+        mLevelsCompleted.add(finishedLevel);
+        mLevelsUncompleted.remove(finishedLevel);//todo: check hogy remove(0) kell-e ez helyett??!!
+        Timber.i("mUser, mLevelsCompleted, and mLevelsUncompleted are updated");
+        // restart GameFragment
+        Timber.i("Starting initGameFragment again");
+        initGameFragment();
     }
 
     /** This gets the last level from the completed Levels */

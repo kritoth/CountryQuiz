@@ -1,7 +1,6 @@
 package com.tiansirk.countryquiz.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -47,7 +46,7 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
 
     /** The interface for communication */
     public interface GameFragmentListener {
-        void onSubmitClicked();
+        void onLevelFinished(Level finishedLevel);
     }
 
     /** Member for FeedbackDialogFragment */
@@ -69,9 +68,6 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        questionNumber = 0;
-        answerSelected = false;
-        selectedAnswer = "";
         levelPoints = mLevel.getAchievedPoints();
     }
 
@@ -93,9 +89,7 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setDataToViews();
-        showDataView();
-        setupClickListeners();
+        startQuestion();
     }
 
     /** When this fragment is attached to its host activity, ie {@link MainActivity} the listener interface is connected
@@ -200,6 +194,7 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
     }
 
     private void openFeedbackDialog(boolean correct){
+        Timber.i("Starting FeedbackDialog with answer: %s", correct);
         Bundle bundle = new Bundle();
         bundle.putBoolean(KEY_IS_CORRECT, correct);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -211,19 +206,27 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
 
     @Override
     public void onFinishFeedbackDialog(){
+        Timber.i("FeedbackDialog finished. Starting new Level: %s", mLevel.isCompleted());
         if(mLevel.isCompleted()) newLevel();
         else newQuestion();
     }
 
     private void  newLevel(){
-        //todo: restart whole GameFragment for new level
+        listener.onLevelFinished(mLevel);
     }
 
     private void newQuestion(){
+        Timber.i("Starting a new question no. %d", questionNumber);
         questionNumber++;
+        startQuestion();
+    }
+
+    private void startQuestion(){
         answerSelected = false;
         selectedAnswer = "";
-        //todo: get the next Question from list and reset the views
+        setDataToViews();
+        showDataView();
+        setupClickListeners();
     }
 
     /** This method will set the data in member fields to the views */

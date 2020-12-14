@@ -55,7 +55,6 @@
     <!-- FeedbackDialogFragment -->
     <string name="answer_right">Right answer</string>
     <string name="answer_wrong">Wrong answer</string>
-    <string name="done">Done</string>
 
 
 </resources>

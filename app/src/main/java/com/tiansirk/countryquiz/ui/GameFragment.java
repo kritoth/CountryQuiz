@@ -74,9 +74,9 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
             mUser = bundle.getParcelable(KEY_USER);
             mLevel = bundle.getParcelable(KEY_NEXT_LEVEL);
             mQuestions = mLevel.getQuestions();
+            Timber.i("User: %s. Level: %s", mUser.toString(), mLevel.toString().substring(0,40));
         }
         else showErrorMessage();
-        Timber.i("User: %s. Level: %s", mUser.toString(), mLevel.toString().substring(0,40));
     }
 
     @Override

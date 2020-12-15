@@ -18,38 +18,28 @@ import com.tiansirk.countryquiz.model.Level;
 import com.tiansirk.countryquiz.model.Question;
 import com.tiansirk.countryquiz.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_CURRENT_LEVEL;
-import static com.tiansirk.countryquiz.ui.MainActivity.KEY_LEVELS;
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_USER;
 
 /** A simple {@link Fragment} subclass.
  * Use the {@link MainMenuFragmentListener} interface for communication. */
 public class MainMenuFragment extends Fragment {
 
-    /**
-     * Member vars for views
-     */
+    /** Member vars for views */
     private FragmentMainMenuBinding binding;
 
-    /**
-     * Member var for own custom communication listener
-     */
+    /** Member var for own custom communication listener */
     private MainMenuFragmentListener listener;
 
-    /**
-     * The interface for communication
-     */
+    /** The interface for communication */
     public interface MainMenuFragmentListener {
         void onStartGameClicked();
         void onLeaderboardClicked();
     }
 
-    /**
-     * Member vars for game
-     */
+    /** Member vars for game */
     private User mUser;
     private Level mLevel;
     private List<Question> mQuestions;
@@ -61,6 +51,14 @@ public class MainMenuFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.i("Receiving User and ArrayList<Level> from MainActivity");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mUser = bundle.getParcelable(KEY_USER);
+            mLevel = bundle.getParcelable(KEY_CURRENT_LEVEL);
+            Timber.i("User: %s. Levels: %s", mUser.toString(), mLevel.toString().substring(0,30));
+        }
+        else showErrorMessage();
     }
 
     @Override
@@ -69,11 +67,7 @@ public class MainMenuFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentMainMenuBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
-        Timber.i("Receiving User and ArrayList<Level> from MainActivity");
-        Bundle bundle = getArguments();
-        mUser = bundle.getParcelable(KEY_USER);
-        mLevel = bundle.getParcelable(KEY_CURRENT_LEVEL);
-        Timber.i("User: %s. Levels: %s", mUser.toString(), mLevel.toString().substring(0,30));
+
         return rootView;
     }
 

@@ -159,8 +159,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         mLevelsUncompleted.remove(finishedLevel);//todo: check hogy remove(0) kell-e ez helyett??!!
         Timber.i("mUser, mLevelsCompleted, and mLevelsUncompleted are updated");
         // restart GameFragment
-        Timber.i("Starting initGameFragment again");
-        initGameFragment();
+        Timber.i("Starting initMainMenuFragment");
+        initMainMenuFragment();
     }
 
     /** This gets the last level from the completed Levels */

@@ -27,8 +27,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements Repository.EntityChangeListener,
         WelcomeFragment.WelcomeFragmentListener, MainMenuFragment.MainMenuFragmentListener, GameFragment.GameFragmentListener {
 
-    public static final String USER_PREFERENCES = MainActivity.class.getPackage().getName().concat("_userPrefs");
-    public static final String KEY_SAVED_USER_NAME = "userName";
     public static final String KEY_USER = "user";
     public static final String KEY_LEVELS = "levels";
     public static final String KEY_CURRENT_LEVEL = "current_level";
@@ -43,17 +41,13 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     /** Member vars for the game */
     private User mUser;
-    private List<Level> mLevels;
     private List<Level> mLevelsCompleted;
     private List<Level> mLevelsUncompleted;
-    private List<Question> mQuestions;
 
     /** Member vars for fragments of this activity */
     private WelcomeFragment welcomeFragment;
     private MainMenuFragment mainMenuFragment;
     private GameFragment gameFragment;
-
-    private Repository mRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,17 +66,12 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         //initFireStore();
     }
 
-    private void initFireStore(){
-        Timber.i("Initializing Repository");
-        mRepository = new Repository(this, User.class, COLLECTION_NAME);
-    }
-
     private void initWelcomeFragment(){
         Timber.i("Initializing WelcomeFragment");
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         welcomeFragment = new WelcomeFragment();
-        ft.replace(R.id.container_welcome, welcomeFragment, TAG_WELCOME_FRAGMENT);
+        ft.replace(R.id.container, welcomeFragment, TAG_WELCOME_FRAGMENT);
         ft.disallowAddToBackStack();
         ft.commit();
     }
@@ -96,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         FragmentTransaction ft = fragmentManager.beginTransaction();
         mainMenuFragment = new MainMenuFragment();
         mainMenuFragment.setArguments(bundle);
-        ft.replace(R.id.container_main_menu, mainMenuFragment, TAG_MAIN_MENU_FRAGMENT);
+        ft.replace(R.id.container, mainMenuFragment, TAG_MAIN_MENU_FRAGMENT);
         ft.addToBackStack(TAG_MAIN_MENU_FRAGMENT);
         ft.commit();
 
@@ -112,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         FragmentTransaction ft = fragmentManager.beginTransaction();
         gameFragment = new GameFragment();
         gameFragment.setArguments(bundle);
-        ft.replace(R.id.container_game, gameFragment, TAG_GAME_FRAGMENT);
+        ft.replace(R.id.container, gameFragment, TAG_GAME_FRAGMENT);
         ft.addToBackStack(TAG_GAME_FRAGMENT);
         ft.commit();
     }
@@ -156,9 +145,9 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
             mLevelsCompleted = new ArrayList<>();
             mLevelsCompleted.add(finishedLevel);
         }
-        mLevelsUncompleted.remove(finishedLevel);//todo: check hogy remove(0) kell-e ez helyett??!!
+        mLevelsUncompleted.remove(finishedLevel);
         Timber.i("mUser, mLevelsCompleted, and mLevelsUncompleted are updated");
-        // restart GameFragment
+        // todo: save to Firestore!!
         Timber.i("Starting initMainMenuFragment");
         initMainMenuFragment();
     }

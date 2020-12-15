@@ -162,6 +162,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                         Timber.e(e, "Failed to load user from Firestore.");
                         Toast.makeText(getActivity(), "Loading user data failed.",
                                 Toast.LENGTH_SHORT).show();
+                        showErrorMessage();
                     }
                 });
     }
@@ -170,10 +171,14 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
      * from the User's 'levels' collection  */
     private void getCompletedLevelsFromDb(){
         showProgressBar();
-        Timber.i("Retrieving all Levels from DB for: %s", mUser.getDocumentId());
+        Timber.i("Retrieving completed Levels from DB for: %s", mUser.getDocumentId());
         mRepository.getCompletedLevels(mUser.getDocumentId(), FIELD_NAME_LEVEL).addOnSuccessListener(getActivity(), new OnSuccessListener() {
             @Override
             public void onSuccess(Object o) {
+                if(o == null) {
+                    getUncompletedLevelsFromDb();
+                    return;
+                }
                 mLevelsCompleted = new ArrayList<>();
                 QuerySnapshot querySnapshot = (QuerySnapshot) o;
                 for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
@@ -188,10 +193,11 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                 .addOnFailureListener(getActivity(), new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // If load fails, display a message to the user.
-                        Timber.e(e, "Failed to load levels from Firestore.");
-                        Toast.makeText(getActivity(), "Loading levels data failed.",
-                                Toast.LENGTH_SHORT).show();
+                        // If loading of completedLevels fails, load uncompletedLevels
+                        getUncompletedLevelsFromDb();
+//                        Timber.e(e, "Failed to load levels from Firestore.");
+//                        Toast.makeText(getActivity(), "Loading levels data failed.",
+//                                Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -208,8 +214,9 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                 for(QueryDocumentSnapshot documentSnapshot : querySnapshot){
                     Level level = documentSnapshot.toObject(Level.class);
                     mLevelsUncompleted.add(level);
-                    setupExistingUserSucceeded();
+
                 }
+                setupExistingUserSucceeded();
             }
         })
                 .addOnFailureListener(getActivity(), new OnFailureListener() {
@@ -219,6 +226,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
                         Timber.e(e, "Failed to load levels from Firestore.");
                         Toast.makeText(getActivity(), "Loading levels data failed.",
                                 Toast.LENGTH_SHORT).show();
+                        showErrorMessage();
                     }
                 });
     }
@@ -374,7 +382,7 @@ public class WelcomeFragment extends Fragment implements MyResultReceiver.Receiv
 
     /** Called when data for existing user from Firestore downloading finished */
     private void setupExistingUserSucceeded(){
-        Timber.i("Finished retrieving new user's data. Start sending back setup results. Completed Levels size: #%s. Uncompleted Levels size: %s.", mLevelsCompleted.size(), mLevelsUncompleted.size());
+        Timber.i("Finished retrieving eisting user's data. Start sending back setup results.");
         hideProgressBar();
         listener.onSetupFinished(mUser, mLevelsCompleted, mLevelsUncompleted);
     }

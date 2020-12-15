@@ -73,7 +73,7 @@ public class MainMenuFragment extends Fragment {
         Bundle bundle = getArguments();
         mUser = bundle.getParcelable(KEY_USER);
         mLevel = bundle.getParcelable(KEY_CURRENT_LEVEL);
-        Timber.i("User: %s. Levels: %s", mUser.toString(), mLevel.toString());
+        Timber.i("User: %s. Levels: %s", mUser.toString(), mLevel.toString().substring(0,30));
         return rootView;
     }
 

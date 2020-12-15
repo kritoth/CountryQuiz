@@ -99,7 +99,7 @@ public class EditNameDialogFragment extends DialogFragment implements TextView.O
                 v.requestFocus();
                 return false;
             }
-            // Return input text back to activity through the implemented listener
+            // Return input text back to calling fragment through the implemented listener
             EditNameDialogListener listener = (EditNameDialogListener) getActivity().getSupportFragmentManager().findFragmentByTag(TAG_WELCOME_FRAGMENT);
             Intent inputData = new Intent();
             inputData.putExtra("name", binding.txtYourName.getText().toString().trim());

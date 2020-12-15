@@ -1,7 +1,5 @@
 package com.tiansirk.countryquiz.ui;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +13,9 @@ import android.view.ViewGroup;
 
 import com.tiansirk.countryquiz.R;
 import com.tiansirk.countryquiz.databinding.FragmentFeedbackDialogBinding;
+
+import static com.tiansirk.countryquiz.ui.GameFragment.KEY_IS_CORRECT;
+import static com.tiansirk.countryquiz.ui.MainActivity.TAG_GAME_FRAGMENT;
 
 /**
  * A simple {@link Fragment} subclass for providing feedback about the user's submitted answer.
@@ -37,21 +38,10 @@ public class FeedbackDialogFragment extends DialogFragment {
     public FeedbackDialogFragment() {}
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof FeedbackDialogListener) {
-            listener = (FeedbackDialogListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement FeedbackDialogListener");
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mCorrect = getArguments().getBoolean("answer");
+            mCorrect = getArguments().getBoolean(KEY_IS_CORRECT);
         }
     }
 
@@ -66,6 +56,8 @@ public class FeedbackDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // Return input text back to calling fragment through the implemented listener
+        listener = (FeedbackDialogListener) getActivity().getSupportFragmentManager().findFragmentByTag(TAG_GAME_FRAGMENT);
         binding.btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

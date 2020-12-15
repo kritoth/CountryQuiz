@@ -16,6 +16,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.tiansirk.countryquiz.model.Identifiable;
 import com.tiansirk.countryquiz.model.Level;
+import com.tiansirk.countryquiz.model.Question;
 
 import java.util.List;
 
@@ -112,20 +113,20 @@ public class Repository<TEntity extends Identifiable<String>> {
     public Task<QuerySnapshot> getCompletedLevels(String id, String orderingField){
         final String documentName = id;
         DocumentReference documentReference = collectionReference.document(documentName);
-        Timber.i( "Getting levels of " + documentName + ".");
+        Timber.i( "Getting completed levels of " + documentName + ".");
 
         return documentReference.collection(LEVELS_SUBCOLLECTION_NAME)
                 .whereEqualTo(FIELD_NAME_COMPLETED, true)
                 .orderBy(orderingField).get()
                 .continueWith(new Continuation<QuerySnapshot, QuerySnapshot>() {
             @Override
-            public QuerySnapshot then(@NonNull Task<QuerySnapshot> task) throws Exception {
+            public QuerySnapshot then(@NonNull Task<QuerySnapshot> task) {
                 QuerySnapshot querySnapshot = task.getResult();
                 if (querySnapshot.isEmpty()) {
-                    Timber.d( "Levels DocumentSnapshot does not exist.");
+                    Timber.d( "Levels QuerySnapshot does not exist.");
                     return null;
                 } else {
-                    Timber.i("Returning levels documentSnapshot");
+                    Timber.i("Returning levels querySnapshot");
                     return querySnapshot;
                 }
             }
@@ -135,7 +136,7 @@ public class Repository<TEntity extends Identifiable<String>> {
     public Task<QuerySnapshot> getUncompletedLevels(String id, String orderingField){
         final String documentName = id;
         DocumentReference documentReference = collectionReference.document(documentName);
-        Timber.i( "Getting levels of " + documentName + ".");
+        Timber.i( "Getting uncompleted levels of " + documentName + ".");
 
         return documentReference.collection(LEVELS_SUBCOLLECTION_NAME)
                 .whereEqualTo(FIELD_NAME_COMPLETED, false)
@@ -193,7 +194,10 @@ public class Repository<TEntity extends Identifiable<String>> {
             DocumentReference levelDocumentReference = userDocumentReference.collection(LEVELS_SUBCOLLECTION_NAME).document();
             if(Level.class.isInstance(tEntity)){
                 ((Level)tEntity).setUserId(parentDocumentId);
-                ((Level)tEntity).setDocumentId(levelDocumentReference.getId());
+                List<Question> questions = ((Level)tEntity).getQuestions();
+                for(Question q : questions){
+                    q.setLevelId(levelDocumentReference.getId());
+                }
             }
             batch.set(levelDocumentReference, tEntity);
         }

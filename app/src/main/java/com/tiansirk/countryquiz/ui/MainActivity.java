@@ -151,7 +151,11 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         List<String> finishedLevels = mUser.getCompletedLevels();
         finishedLevels.add(finishedLevel.getDocumentId());
         mUser.setCompletedLevels(finishedLevels);
-        mLevelsCompleted.add(finishedLevel);
+        if(mLevelsCompleted != null) mLevelsCompleted.add(finishedLevel);
+        else {
+            mLevelsCompleted = new ArrayList<>();
+            mLevelsCompleted.add(finishedLevel);
+        }
         mLevelsUncompleted.remove(finishedLevel);//todo: check hogy remove(0) kell-e ez helyett??!!
         Timber.i("mUser, mLevelsCompleted, and mLevelsUncompleted are updated");
         // restart GameFragment
@@ -161,7 +165,10 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
 
     /** This gets the last level from the completed Levels */
     private Level currentLevel(){
-        return mLevelsCompleted.get(mLevelsCompleted.size()-1);
+        if(mLevelsCompleted != null) {
+            return mLevelsCompleted.get(mLevelsCompleted.size() - 1);
+        }
+        else return mLevelsUncompleted.get(0);
     }
 
     /** This gets the first level from the not completed Levels */

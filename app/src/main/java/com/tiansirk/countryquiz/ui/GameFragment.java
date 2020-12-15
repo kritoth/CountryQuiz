@@ -68,7 +68,15 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        levelPoints = mLevel.getAchievedPoints();
+        Timber.i("Receiving User and ArrayList<Level> from MainMenuActivity");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mUser = bundle.getParcelable(KEY_USER);
+            mLevel = bundle.getParcelable(KEY_NEXT_LEVEL);
+            mQuestions = mLevel.getQuestions();
+        }
+        else showErrorMessage();
+        Timber.i("User: %s. Level: %s", mUser.toString(), mLevel.toString().substring(0,40));
     }
 
     @Override
@@ -77,18 +85,13 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
         // Inflate the layout for this fragment
         binding = FragmentGameBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
-        Timber.i("Receiving User and ArrayList<Level> from MainMenuActivity");
-        Bundle bundle = getArguments();
-        mUser = bundle.getParcelable(KEY_USER);
-        mLevel = bundle.getParcelable(KEY_NEXT_LEVEL);
-        mQuestions = mLevel.getQuestions();
-        Timber.i("User: %s. Level: %s", mUser.toString(), mLevel.toString());
         return rootView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupClickListeners();
         startQuestion();
     }
 
@@ -112,42 +115,67 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
         listener = null;
     }
 
+    private void startQuestion(){
+        answerSelected = false;
+        selectedAnswer = "";
+        setDataToViews();
+        showDataView();
+
+    }
+
+    /** This method will set the data in member fields to the views */
+    private void setDataToViews(){
+        Timber.i("Start binding answers to answers-TextViews");
+        showProgressBar();
+        Question currQuestion = mQuestions.get(questionNumber);
+        binding.tvGameQuestion.setText(currQuestion.getQuestion());
+        randomBinding(currQuestion);
+    }
+
+    /** Shuffles the TextViews in a Collection in order to let them randomly bind with data. */
+    private void randomBinding(Question question){
+        List<TextView> answerTextViews = new ArrayList<>();
+        answerTextViews.add(binding.tvGameAnswer1);
+        answerTextViews.add(binding.tvGameAnswer2);
+        answerTextViews.add(binding.tvGameAnswer3);
+        answerTextViews.add(binding.tvGameAnswer4);
+        Collections.shuffle(answerTextViews);
+        answerTextViews.get(0).setText(question.getRightAnswer());
+        for(int i=0;i<question.getWrongAnswers().size();i++) {
+            answerTextViews.get(i+1).setText(question.getWrongAnswers().get(i));
+        }
+        Timber.i("Finished randomly binding answers to answer-TextViews");
+    }
+
     /** Listens the Submit button. On click evaluates if answer is marked, evaluates the marked answer */
     public void setupClickListeners(){
+        Timber.i("Setting up clickListeners");
         binding.tvGameAnswer1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if(answerSelected) deMarkAnswer(view);
                     else markAnswer(view);
-                }
             }
         });
         binding.tvGameAnswer2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if(answerSelected) deMarkAnswer(view);
                     else markAnswer(view);
-                }
             }
         });
         binding.tvGameAnswer3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if(answerSelected) deMarkAnswer(view);
                     else markAnswer(view);
-                }
             }
         });
         binding.tvGameAnswer4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if(answerSelected) deMarkAnswer(view);
                     else markAnswer(view);
-                }
             }
         });
         binding.btnGameSubmit.setOnClickListener(new View.OnClickListener() {
@@ -163,19 +191,21 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
     }
 
     /** Marks the {@param view} with different color, textcolor and sets its selected status */
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void markAnswer(View view) {
         answerSelected = true;
         selectedAnswer = ((TextView) view).getText().toString();
-        ((TextView) view).setTextAppearance(R.style.AnswerTextSelected);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ((TextView) view).setTextAppearance(R.style.AnswerTextSelected);
+        }
     }
 
     /** De-marks the {@param view} by restoring its color, textcolor and re-sets its selected status */
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void deMarkAnswer(View view) {
         answerSelected = false;
         selectedAnswer = ((TextView) view).getText().toString();
-        ((TextView) view).setTextAppearance(R.style.AnswerText);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ((TextView) view).setTextAppearance(R.style.AnswerText);
+        }
     }
 
     private void evaluateAnswer(){
@@ -199,10 +229,10 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
         Bundle bundle = new Bundle();
         bundle.putBoolean(KEY_IS_CORRECT, correct);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
+
         mFeedbackDialogFragment = new FeedbackDialogFragment();
         mFeedbackDialogFragment.setArguments(bundle);
-        ft.show(mFeedbackDialogFragment);
+        mFeedbackDialogFragment.show(fragmentManager, "fragment_feedback_dialog");
     }
 
     @Override
@@ -212,44 +242,15 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
         else newQuestion();
     }
 
-    private void  newLevel(){
-        listener.onLevelFinished(mLevel);
-    }
-
     private void newQuestion(){
-        Timber.i("Starting a new question no. %d", questionNumber);
         questionNumber++;
+        Timber.i("Starting a new question no. %d", questionNumber);
         startQuestion();
     }
 
-    private void startQuestion(){
-        answerSelected = false;
-        selectedAnswer = "";
-        setDataToViews();
-        showDataView();
-        setupClickListeners();
-    }
-
-    /** This method will set the data in member fields to the views */
-    private void setDataToViews(){
-        showProgressBar();
-        Question currQuestion = mQuestions.get(questionNumber);
-        binding.tvGameQuestion.setText(currQuestion.getQuestion());
-        randomBinding(currQuestion);
-    }
-
-    /** Shuffles the TextViews in a Collection in order to let them randomly bind with data. */
-    private void randomBinding(Question question){
-        List<TextView> answerTextViews = new ArrayList<>();
-        answerTextViews.add(binding.tvGameAnswer1);
-        answerTextViews.add(binding.tvGameAnswer2);
-        answerTextViews.add(binding.tvGameAnswer3);
-        answerTextViews.add(binding.tvGameAnswer4);
-        Collections.shuffle(answerTextViews);
-        answerTextViews.get(0).setText(question.getRightAnswer());
-        for(int i=0;i<question.getWrongAnswers().size();i++) {
-            answerTextViews.get(i+1).setText(question.getWrongAnswers().get(i));
-        }
+    private void  newLevel(){
+        Timber.i("Starting a new level.");
+        listener.onLevelFinished(mLevel);
     }
 
     /** This method will make the Game view visible and hide the error message */
@@ -259,7 +260,7 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
         // Then hide loading indicator
         hideProgressBar();
         // Then, make sure the data is visible
-        binding.gameCl.setVisibility(View.INVISIBLE);
+        binding.gameCl.setVisibility(View.VISIBLE);
     }
     /** This method will make the error message visible and hide the Game view */
     private void showErrorMessage() {

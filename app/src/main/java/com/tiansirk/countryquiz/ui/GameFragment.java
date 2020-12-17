@@ -140,11 +140,22 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
         answerTextViews.add(binding.tvGameAnswer3);
         answerTextViews.add(binding.tvGameAnswer4);
         Collections.shuffle(answerTextViews);
-        answerTextViews.get(0).setText(question.getRightAnswer());
-        for(int i=0;i<question.getWrongAnswers().size();i++) {
-            answerTextViews.get(i+1).setText(question.getWrongAnswers().get(i));
+        if(question.getQuestion().equals(R.string.question_flag)) {
+            setAsImage(answerTextViews, question);
+        } else {
+            setAsText(answerTextViews, question);
         }
         Timber.i("Finished randomly binding answers to answer-TextViews");
+    }
+
+    private void setAsImage(List<TextView> textViews, Question question){
+        //todo: Picasso
+    }
+    private void setAsText(List<TextView> textViews, Question question){
+        textViews.get(0).setText(question.getRightAnswer());
+        for(int i=0;i<question.getWrongAnswers().size();i++) {
+            textViews.get(i+1).setText(question.getWrongAnswers().get(i));
+        }
     }
 
     /** Listens the Submit button. On click evaluates if answer is marked, evaluates the marked answer */
@@ -196,6 +207,7 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
         selectedAnswer = ((TextView) view).getText().toString();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ((TextView) view).setTextAppearance(R.style.AnswerTextSelected);
+
         }
     }
 

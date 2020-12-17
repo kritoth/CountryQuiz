@@ -72,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements Repository.Entity
         FragmentTransaction ft = fragmentManager.beginTransaction();
         welcomeFragment = new WelcomeFragment();
         ft.replace(R.id.container, welcomeFragment, TAG_WELCOME_FRAGMENT);
-        ft.disallowAddToBackStack();
+//        ft.disallowAddToBackStack();
+        ft.addToBackStack(TAG_WELCOME_FRAGMENT);
         ft.commit();
     }
 

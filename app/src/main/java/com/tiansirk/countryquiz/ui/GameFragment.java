@@ -1,18 +1,19 @@
 package com.tiansirk.countryquiz.ui;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import timber.log.Timber;
 
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.tiansirk.countryquiz.model.User;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_NEXT_LEVEL;
 import static com.tiansirk.countryquiz.ui.MainActivity.KEY_USER;
@@ -37,6 +39,7 @@ import static com.tiansirk.countryquiz.ui.MainActivity.KEY_USER;
 public class GameFragment extends Fragment implements FeedbackDialogFragment.FeedbackDialogListener {
 
     public static final String KEY_IS_CORRECT = "is_correct";
+    private static final long COUNTDOWN_IN_MILLIS = 30000;
 
     /** Member vars for views */
     private FragmentGameBinding binding;
@@ -60,6 +63,10 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
     private int levelPoints;
     private boolean answerSelected;
     private String selectedAnswer;
+    private ColorStateList textColorDefaultTv;
+    private ColorStateList textColorDefaultCd;
+    private CountDownTimer countDownTimer;
+    private long timeLeftInMillis;
 
     // Required empty public constructor
     public GameFragment() {
@@ -95,6 +102,49 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
         startQuestion();
     }
 
+    /** Listens the Submit button. On click evaluates if answer is marked, evaluates the marked answer */
+    public void setupClickListeners(){
+        Timber.i("Setting up clickListeners");
+        binding.tvGameAnswer1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(answerSelected) deMarkAnswer(view);
+                else markAnswer(view);
+            }
+        });
+        binding.tvGameAnswer2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(answerSelected) deMarkAnswer(view);
+                else markAnswer(view);
+            }
+        });
+        binding.tvGameAnswer3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(answerSelected) deMarkAnswer(view);
+                else markAnswer(view);
+            }
+        });
+        binding.tvGameAnswer4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(answerSelected) deMarkAnswer(view);
+                else markAnswer(view);
+            }
+        });
+        binding.btnGameSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!answerSelected) {
+                    Toast.makeText(getContext(), "Select an answer first!", Toast.LENGTH_SHORT);
+                    return;
+                }
+                evaluateAnswer();
+            }
+        });
+    }
+
     /** When this fragment is attached to its host activity, ie {@link MainActivity} the listener interface is connected
      * If not then an error exception is thrown to notify the developer. */
     @Override
@@ -112,15 +162,51 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
+        if (listener != null) {
+            listener = null;
+        }
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
     }
 
     private void startQuestion(){
         answerSelected = false;
         selectedAnswer = "";
+        textColorDefaultTv = binding.tvGameAnswer1.getTextColors();
+        textColorDefaultCd = binding.tvGameTime.getTextColors();
+        timeLeftInMillis = COUNTDOWN_IN_MILLIS;
+        startCountDown();
         setDataToViews();
         showDataView();
+    }
 
+    private void startCountDown() {
+        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeftInMillis = millisUntilFinished;
+                updateCountDownText();
+            }
+            @Override
+            public void onFinish() {
+                timeLeftInMillis = 0;
+                updateCountDownText();
+                evaluateAnswer();
+            }
+        }.start();
+    }
+
+    private void updateCountDownText() {
+        int minutes = (int) (timeLeftInMillis / 1000) / 60;
+        int seconds = (int) (timeLeftInMillis / 1000) % 60;
+        String timeFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        binding.tvGameTime.setText(timeFormatted);
+        if (timeLeftInMillis < 10000) {
+            binding.tvGameTime.setTextColor(Color.RED);
+        } else {
+            binding.tvGameTime.setTextColor(textColorDefaultCd);
+        }
     }
 
     /** This method will set the data in member fields to the views */
@@ -158,49 +244,6 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
         }
     }
 
-    /** Listens the Submit button. On click evaluates if answer is marked, evaluates the marked answer */
-    public void setupClickListeners(){
-        Timber.i("Setting up clickListeners");
-        binding.tvGameAnswer1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    if(answerSelected) deMarkAnswer(view);
-                    else markAnswer(view);
-            }
-        });
-        binding.tvGameAnswer2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    if(answerSelected) deMarkAnswer(view);
-                    else markAnswer(view);
-            }
-        });
-        binding.tvGameAnswer3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    if(answerSelected) deMarkAnswer(view);
-                    else markAnswer(view);
-            }
-        });
-        binding.tvGameAnswer4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                    if(answerSelected) deMarkAnswer(view);
-                    else markAnswer(view);
-            }
-        });
-        binding.btnGameSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!answerSelected) {
-                    Toast.makeText(getContext(), "Select an answer first!", Toast.LENGTH_SHORT);
-                    return;
-                }
-                evaluateAnswer();
-            }
-        });
-    }
-
     /** Marks the {@param view} with different color, textcolor and sets its selected status */
     private void markAnswer(View view) {
         answerSelected = true;
@@ -222,6 +265,7 @@ public class GameFragment extends Fragment implements FeedbackDialogFragment.Fee
 
     private void evaluateAnswer(){
         Timber.i("Start evaluating answer");
+        countDownTimer.cancel();
         Question question = mQuestions.get(questionNumber);
         question.setAnswered(true);
         boolean correct = isCorrectAnswer(question);

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -161,22 +162,22 @@ public class GenerateQuestionUtils {
 
     /** Returns a formatted String version of {@param population}, rounded according to its value */
     private static String roundPopulation(int population){
-        if(population<1001) return String.format("|%,d|", Math.round(population/10.0)*10);
-        else if(population<50001) return String.format("|%,d|", Math.round(population/100.0)*100);
-        else if(population<1000001) return String.format("|%,d|", Math.round(population/1000.0)*1000);
-        else if(population<10000001) return String.format("|%,d|", Math.round(population/100000.0)*100000);
-        else if(population<100000001) return String.format("|%,d|", Math.round(population/1000000.0)*1000000);
-        else return String.format("|%,d|", Math.round(population/10000000.0)*10000000);
+        if(population<1001) return String.format(Locale.getDefault(), "|%,d|", Math.round(population/10.0)*10);
+        else if(population<50001) return String.format(Locale.getDefault(), "|%,d|", Math.round(population/100.0)*100);
+        else if(population<1000001) return String.format(Locale.getDefault(), "|%,d|", Math.round(population/1000.0)*1000);
+        else if(population<10000001) return String.format(Locale.getDefault(), "|%,d|", Math.round(population/100000.0)*100000);
+        else if(population<100000001) return String.format(Locale.getDefault(), "|%,d|", Math.round(population/1000000.0)*1000000);
+        else return String.format(Locale.getDefault(), "|%,d|", Math.round(population/10000000.0)*10000000);
     }
 
     /** Returns a formatted String version of {@param area}, rounded according to its value */
     private static String roundArea(double area){
         int a = (int) area;
-        if(area<101) return String.format("|%,d|", a);
-        else if(area<1001) return String.format("|%,d|", Math.round(a/10.0)*10);
-        else if(area<50001) return String.format("|%,d|", Math.round(a/100.0)*100);
-        else if(area<1000001) return String.format("|%,d|", Math.round(a/1000.0)*1000);
-        else return String.format("|%,d|", Math.round(a/100000.0)*100000);
+        if(area<101) return String.format(Locale.getDefault(), "|%,d|", a);
+        else if(area<1001) return String.format(Locale.getDefault(), "|%,d|", Math.round(a/10.0)*10);
+        else if(area<50001) return String.format(Locale.getDefault(), "|%,d|", Math.round(a/100.0)*100);
+        else if(area<1000001) return String.format(Locale.getDefault(), "|%,d|", Math.round(a/1000.0)*1000);
+        else return String.format(Locale.getDefault(), "|%,d|", Math.round(a/100000.0)*100000);
     }
 
     /** Generates unique random numbers between 0 inclusive and {@param endNum} exclusive,

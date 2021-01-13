@@ -26,6 +26,7 @@ task clean(type: Delete) {
 }
 
 ext {
+    materialVersion = '1.2.1'
     activityVersion = '1.2.0-alpha02'
     firebaseBomVersion = '26.0.0'
     timberVersion = '4.7.1'

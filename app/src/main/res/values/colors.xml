@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-    <color name="colorPrimary">#795548</color>
-    <color name="colorPrimaryDark">#4b2c20</color>
-    <color name="colorPrimaryLight">#a98274</color>
-    <color name="colorAccent">#486C79</color>
-    <color name="brown_100">#d7ccc8</color>
-    <color name="brown_300">#a1887f</color>
-    <color name="brown_500">#795548</color>
+  <!-- Soil tone colors -->
+  <color name="primaryColor">#3e2723</color>
+  <color name="primaryLightColor">#6a4f4b</color>
+  <color name="primaryDarkColor">#1b0000</color>
+  <color name="secondaryColor">#a1887f</color>
+  <color name="secondaryLightColor">#d3b8ae</color>
+  <color name="secondaryDarkColor">#725b53</color>
+  <color name="primaryTextColor">#ffffff</color>
+  <color name="secondaryTextColor">#000000</color>
+
 </resources>
